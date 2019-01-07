@@ -1,0 +1,206 @@
+---
+output:
+  html_document: default
+---
+
+<img src="../Labs/Logo.png" style="position:absolute;top:10px;right:125px;width:250px;height=250px" />
+
+### `r fileName="../Labs/Title.txt";readChar(fileName,file.info(fileName)$size)`
+#### Using R Markdown to write laboratory reports
+#### `r format(Sys.Date(), format="%B %d, %Y")`
+
+- - -
+
+#### Table of Contents
+
+[Overview][]
+
+[Starting out][]
+
+[Document structure][]
+
+[Including R code and output][]
+
+[Compiling documents][]
+
+[Including graphics][]
+
+[Writing mathematics][] 
+
+[### Wrap-up][]
+
+
+
+```{r preliminaries, include=FALSE}
+rm(list=ls())
+library(knitr)
+knitr::opts_chunk$set(cache=FALSE, warnings=FALSE, tidy=TRUE)
+```
+
+<br>
+
+#### Overview 
+
+You will prepare all written material for this course using R Markdown, a great tool for combining text, math, executable R code and graphics in attractive documents.  R Markdown files have the non-optional extension `.Rmd`. Getting started with R Markdown is almost trivial if you use the Rstudio editor.  I learned all I needed to know to prepare my first document using an example file from a  colleague (much like this one) and the Markdown Quick Reference, which can be accessed via the R Studio Help menu. The R Markdown Cheat Sheet and R Markdown Reference guide, also available in R Studio Help, are also very good.   More comprehensive tutorials can be found at
+
+http://www.stat.cmu.edu/~cshalizi/rmarkdown/#mark-up-markdown
+
+and
+
+http://rmarkdown.rstudio.com/.
+
+These sources are so clear and thorough that I decided it would be reinventing perfectly functional wheels were I to try to duplicate them.  Instead, I will give you some key points here and urge you to do some self-teaching from other materials. 
+
+You can get up to speed with R Markdown quickly, but don't let that ease of learning fool you-- this is a substantial tool.  I know several students in the Statistics Department as well as some of my own students who prepare entire manuscripts with R Markdown.  (I use LyX and LaTeX, but that is another story.  I urge you to throw Microsoft Word in the trash.  It is not suitable for scientific work.) R Markdown is unsurpassed for documenting analysis code, a chore that is now required for publishing results in most reputable scientific journals.  All responsible investigators document their work carefully.
+
+Everything that follows assumes you will be using R Studio to compose code, text, and mathematics.  Other editors will work, but  if you choose to use a different one, well, you are on your own. 
+
+The general workflow is this.  You write text, code, and math, including graphics if you need them. Then you spell check your document by pressing the `ABC` button in the toolbar.  Finally you press the Knit button to produce an .html document.
+<br>
+
+#### Starting out
+
+Understand that you will probably learn the most about R Markdown if you study the .Rmd file next to the .html it produces.  I assume you will be reading the .Rmd file (this one), otherwise, there are some places where you can't really see what is going on from the .html output. 
+
+The first step is to choose `File` then `New file` then `R Markdown` from the R Studio toolbar. A useful template will appear.  Alternatively, you may simply use an existing R Markdown file as a template, which is what I did for this document.
+<br>
+
+#### Document structure
+
+As you can see from this document it is easy to partition your work into sensible parts with headings.  I will leave document structure up to you, but the structure you choose should make sense relative to the problems I give you.  There should be a logical flow with proper headings.
+
+It is easy enough to write text.  Use double line breaks to end paragraphs use \<br> to end sections.
+
+#### Including R code and output
+##### Chunks
+
+R Markdown really shines by allowing you to embed code and output mixed in with text.  Sections that contain code within a document are called "Chunks", terminology taken from `Sweave` and `Knitr`, software designed to integrate R code and output to LaTeX documents. More about LaTeX in a moment. For what it is worth, you are not limited to R code in R Markdown.  You can also include code in Bash, Python, SQL, Rcpp, and Stan in your documents.  
+
+To insert an R chunk in your document, simply go to the `Insert` menu and click on the R icon at the top of the drop down. A grey block will appear, a blank canvas for your R code
+```{r}
+
+```
+You simply write you code as you normally would within this grey block. So for example, I will generate some random data, plot it, and do a regression using:
+
+```{r}
+x = runif(100,3,50)
+y = rnorm(length(x), x, 15)
+plot(x,y)
+regmod=lm(y~x)
+summary(regmod)
+```
+You can put R code within a line of text using constructs like `r ls()`.  Note that \` is not ', but rather the symbol below ~ on your keyboard.  Not that `r ls()` gets replaced with a list of objects in the workspace (regmod, x, and y) when you Knit the document.  Lines 8 and 10 above illustrate how this can be useful.
+<br>
+
+#### Options for chunks
+
+It is possible to include options for execution and display in Chunks, something like
+```{r, include = TRUE}
+#Put R code here
+```
+where the include statement in an option for controlling execution.  Commonly used options are
+
+* include = FALSE prevents code and results from appearing in the finished file. R Markdown still runs the code in the chunk, and the results can be used by other chunks.
+* echo = FALSE prevents code, but not the results from appearing in the finished file. This is a useful way to embed figures.
+* eval = FALSE prevents the coding from running
+* message = FALSE prevents messages that are generated by code from appearing in the finished file.
+* warning = FALSE prevents warnings that are generated by code from appearing in the finished.
+* fig.cap = "..." adds a caption to graphical results.
+* fig.width =  sets the width of figures produced by R, in inches
+* fig.height = sets the height of figures produced by R, in inches
+
+#### A *very* important caution
+You might be tempted to write code something like
+```{r, eval=FALSE}
+setwd("/Tom/Documents/AmazingProject")
+```
+I included the eval=FALSE option to prevent execution. Here is what the author of Knitr has to say about this code:
+
+>"setwd() is bad, dirty, ugly... you should never use it inside your 
+>document; use this convention: data files go with source files, and
+>always start R in the directory of the source files. Whenever you want
+>to manipulate files, they are assumed to be under the same directory
+>of your source (e.g. R Markdown documents). Then you can always use relative
+>paths and you will never need to setwd(). Using setwd() contradicts
+>with the principle of reproducibility, e.g. you use setwd('foo/bar/')
+>and the directory may not exist in other people's computers. See FAQ
+>7: https://github.com/yihui/knitr/blob/master/FAQ.md"
+
+Don't use setwd() in R Markdown documents. Enough said.
+
+
+#### Compiling documents
+Now is a good time to produce a document to see what we have accomplished. Click on the `Knit` icon on the tool bar and voila, a lovely HTML document will be produced.  Compare the document with the R Markdown and notice that each time you execute an R statement that produces output, it appears nicely formatted in your document.  It is also possible to Knit PDFs and (gag) Word documents, but we will keep things simple and use HTML for our work in this class. If you are going to produce PDFs that include typeset mathematics, then you will also need to download LaTeX.  I recommend MacTeX for Mac OS 
+
+http://www.tug.org/mactex/mactex-download.html
+
+and TexLive for Windows
+
+http://www.tug.org/texlive/.
+
+Downloading LaTeX is a good idea anyway because it is a fabulous tool in its own right, but you don't have to install it as long as you simply produce HTML documents.  More about this in a moment. 
+
+### Including graphics
+You will often need to graphics that are not produced in R.  In particular, you are going to draw scores of Bayesian Networks, also known as directed acylic graphs or, unattractively in my view, DAG's.  You will need to include these in your reports.  Consider the following:
+
+![](ExampleDAG.png)
+**Figure 1**.  Note a couple of things about this figure, a Bayesian network for a simple linear regression. First, I used a very plain, unfancy way to add a caption: Put text below the figure! (There are fancier ways to link figures with captions and I will leave it to the speedy and ambitious among you to figure these out. I promise to be impressed if you do.) The file name for the graphic is `ExampleDAG.png`;  `.png` formats work best, but others, e.g., `.jpg`, can be used.  I advise you to stick with `.png` for HTML output, `.pdf` graphics can be used if you are Knitting to `.pdf` documents.  
+
+
+If you want to control the width, height, and margins of your graphics you may use something like:
+
+<div style="width:400px; height=300px; margin:0 auto;">
+![](ExampleDAG.png)
+</div>
+
+which looks quite a bit better than the first version that was simpler to produce.
+
+You will also see that this diagram is drawn by hand. It is your choice how you want to drawn Bayesian Networks for your reports.  I am fine, of course, if you want to create lab reports with painstakingly created, exact drawings done in Adobe Illustrator or OminGraffle (which is what I used for Hobbs and Hooten). However, I rarely publish diagrams like these in the scientific papers I write, but rather use them as thinking tools for writing out the math documenting Bayesian models, which *does* appear in those papers.  So, most of my drawings of Bayesian Networks are simply done in a notebook, on a whiteboard, or cocktail napkin.  So, I don't want to insist that you take the time to knock these out in a graphics program when you could do the same work in a fraction of the time with a sharp pencil or dry erase marker.   I used ScanBot to take a .pdf of drawings using my phone, then export them to .pgn in Preview. I am sure there are better ways, but this works fine.
+
+Shortcuts like these will *not* be allowed, however, for writing mathematics, which must be properly typeset, as described in the next section. 
+
+#### Writing mathematics
+#####LaTeX
+One of the things that you will learn is that the Bayesian approach provides incredible flexibility and power.  These benefits come with a price:  you *must* clearly and carefully document your model by writing it in proper mathematical and statistical notation.  This is non-trivial and non-negotiable. I am an editor for Ecological Applications and I will return without review any paper using Bayesian analysis that fails to include a proper expression for the posterior and joint distributions in the methods or supplementary materials. This is becoming the norm. So you need to learn how. Reporting  equations in your manuscripts produced by anything but LaTeX will make you look like a novice.
+
+LaTeX is the language of choice for writing typeset math. There is a reason that is used virtually exclusively by mathematicians,  statisticians, physicists, chemists, computer scientists, and most engineers. Therefore, if you are going to do Bayesian analysis, you must learn to use LaTeX, at least the mathematical part of it. (This of course raises the question of what software you should use to prepare your scientific manuscripts, and I am happy to have that discussion with you. Writing documents containing multiple equations in MS Word virtually assures that you will end up with a corrupt document that cannot be saved or printed. Imagine that fate for your dissertation.)
+
+As with R Markdown, there is a slew of material on the web that describes how to use LaTeX for writing equations and I will leave it to your own self teaching to discover what you need to know.  I will provide in a separate handout some of the syntax  commonly used for work in this class.You don't need LaTeX installed on your computer if you Knit your documents to HTML, but I recommend it anyway for reasons I will describe shortly. 
+
+If you want to include math within a sentence you use something like $y_i=\beta_0+\beta_1x_i + \epsilon_i$.  Note that if you put the cursor over this equation, the typeset version appears.  If you want to insert an equation centered on its own line, then use $$y_i\sim\text{normal}(\mu, \sigma^2)$$. To include multiple lines centered, use
+
+$$y_i\sim\text{normal}(\mu, \sigma^2)\\
+\mu\sim\text{normal}(0,1000)\\
+\sigma^2\sim\text{inverse gamma}(.001,.001).
+$$
+ 
+Often you will need a single expression continued on multiple lines and aligned on a relation, i.e., $=$ or $\propto$.  Here is an example of how you do that.
+
+$$\begin{eqnarray}
+[\beta_0,\beta_1, \sigma^2 \mid \mathbf{y}] &\sim &\prod_{i=1}^n[y_i\mid \beta_0,\beta_1,\sigma^2]  \\
+& & \times [\beta_0][\beta_1][\sigma^2]
+\end{eqnarray}$$
+
+
+This last example is particularly important because it shows a posterior distribution proportional to a joint distribution, an expression that contains all one needs to know about Bayesian analysis.  You will compose dozens of these during the semester. If you put the cursor between the ending \$\$ you will see the typeset equation.  Study the relationship between the LaTeX code and the typeset output it produces. I give more explanation of this code in the LaTeX handout.
+
+I realize all of this looks like gibberish now, but a bit of study of of the LaTeX handout that I prepared for you will make these expressions look as familiar as your old slippers. A really nice tool for learning LaTeX for those of you using Mac OS is LaTeXit, an free utility found at https://www.macupdate.com/app/mac/17889/latexit
+It creates .pdf files that can be included in all kinds of documents.  You will also need to install MacText for it to work. Another terrific source for learning LaTeX for Mac OS and Windows is https://www.sharelatex.com/learn/
+<br>
+
+####Conventions for notation
+There are conventions for writing statistical models that exist for a reason: they make it easier to read equations and understand them.  Failing to adhere to these conventions will raise eyebrows with reviewers of your papers.  (Never give a reviewer a reason to knit his or her brow.) Please adhere to the following in preparing your reports:
+
+* Brackets, i.e. $[\,]$ will be used to indicate stochastic relationships and for no other purpose. As you will learn, $[a|b,c]$ means the probability or probability density of $a$ conditional on $b$ and $c$.  Do not use brackets in the same way you would use parentheses. For example, $\alpha((b-c)+(d+f))$  is correct; $\alpha[(b-c)+(d+f)]$ is incorrect.
+* Notate scalars as lowercase, math font, for example: $y,x,\sigma, \omega$
+* Notate vectors as lowercase, math bold font, for example: $\mathbf{y,x,}\,\boldsymbol{\sigma, \omega}$
+* Notate matrices as uppercase, math bold font,  $\mathbf{Y,X,}\,\boldsymbol{\Sigma,\Omega}$
+* Notate distribution names using LaTeX plain text font, for example: $\text{normal}(\mu, \sigma^2)$
+* When possible, use single letters for response and predictor variables in models.  First choice for scalar responses is always $y$; for predictor variables is $x$; and for latent quantities, $z$. Vector and matrix forms use the same letters with appropriate bolding and capitalization. Other letters can be used as needed.
+* Use Greek letters for model parameters, following the case and bolding conventions described above for scalars, vectors, and matrices.  
+* Avoid using variable names like $precip$ or $temp$.  These make for cluttered equations and can be confused with multiplication. You can use subscripts to give greater meaning to single variables, for example, $\sigma_p$ or $x_{precip}$.  If you want to be strict, you should get in the habit of using a plain text font for these descriptive subscripts, for example $\sigma_{\text{p}}$ to conform to style for ESA journals. 
+* The only time you should use multiplication symbols is at the left end of multi-line equations, as illustrated above in the equation array. Never use \* in mathematical expressions; \* is a coding symbol, not a mathematical one.  Write $\beta x_i$ not $\beta\times x_i$
+* Use expanding brackets when needed.  For example: $\left(\frac{\mu^2}{\sigma^2} \right)$ not $(\frac{\mu^2}{\sigma^2})$.
+
+### Wrap-up
+I required students in the past to write lab reports in LyX or LaTeX, but I found that many never used these great tools again (to their detriment, in my view) because their advisers and or committee members insisted parochially on Word documents. Brave and smart student bucked the system and switched to modern tools for scientific writing.  So, I am trying something different this semester.  R Markdown is a nice compromise, easier to learn that LyX or full-on LaTeX, but very useful for the work we will do.  I think you will like it. 

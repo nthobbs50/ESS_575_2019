@@ -1,0 +1,343 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\begin_preamble
+\makeatother
+\usepackage{graphicx}
+\usepackage{lineno,setspace}
+%\linenumbers
+\usepackage[small,compact]{titlesec}
+\usepackage[small,it]{caption}
+%\addtolength{\textfloatsep}{-20mm}
+%\doublespace
+\addtolength{\belowcaptionskip}{-3mm}
+\addtolength{\abovecaptionskip}{-3mm}
+\usepackage{enumitem} % load the package
+\usepackage{bm}
+\usepackage{calc}
+\usepackage{rotating}
+
+\DeclareMathOperator{\dbin}{binomial}
+\DeclareMathOperator{\dpois}{Poisson}
+\DeclareMathOperator{\dnorm}{normal}
+\DeclareMathOperator{\dlnorm}{lognormal}
+\DeclareMathOperator{\dgamma}{gamma}
+\DeclareMathOperator{\dunif}{uniform}
+\DeclareMathOperator{\dmultinom}{multinomial}
+\DeclareMathOperator{\dbeta}{beta}
+\DeclareMathOperator{\ddirch}{Dirichlet}
+\DeclareMathOperator{\dbern}{Bernoulli}
+
+
+
+\addtolength{\intextsep}{-3mm}
+
+\usepackage{fancyheadings}
+\usepackage{url}
+\usepackage[tablesfirst,notablist]{endfloat}
+\end_preamble
+\use_default_options false
+\begin_modules
+sweave
+\end_modules
+\maintain_unincluded_children false
+\language american
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize 11
+\spacing double
+\use_hyperref false
+\papersize letterpaper
+\use_geometry true
+\use_package amsmath 2
+\use_package amssymb 2
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine natbib
+\cite_engine_type authoryear
+\biblio_style plainnat
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 1in
+\topmargin 1in
+\rightmargin 1in
+\bottommargin 1in
+\footskip 1cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+NR 575 Instructions for Final Project 
+\end_layout
+
+\begin_layout Section
+Purpose
+\end_layout
+
+\begin_layout Standard
+It is important that you demonstrate that you have learned enough to apply
+ your new knowledge of Bayesian modeling to your own research.
+ This project will allow you to do so.
+ It represents in nice coda (no pun intended) for the course.
+ Your write up is due at the end of finals week, but I am happy to receive
+ them sooner.
+ Put them in the FinalProjects folder in the class dropbox.
+ This is not a group project.
+ Everyone in the class should turn one in.
+\end_layout
+
+\begin_layout Section
+Content
+\end_layout
+
+\begin_layout Standard
+Please structure your write-up in the following sections.
+\end_layout
+
+\begin_layout Subsection
+Introduction 
+\end_layout
+
+\begin_layout Standard
+Write a brief introduction to the problem you are studying.
+ The first few sentences should provide the broad context –why is the general
+ topic broadly important to the discipline of ecology, citing a 
+\emph on
+few
+\emph default
+ key papers.
+ Proceed to explain why your specific work will advance understanding of
+ the broad topic.
+ Describe the core questions and or objectives of the work.
+ The introduction should resemble a funnel – big topics at the top narrowing
+ to specific questions at the bottom.
+\end_layout
+
+\begin_layout Subsection
+Data and Research design
+\end_layout
+
+\begin_layout Standard
+Describe the data that you will use to fit models and how they were collected.
+ Imagine that you were giving me one of the word problems I gave you (payback).
+ I need to know enough to be able to write the model myself.
+ I don't need to know details of methods for data collection, but I do need
+ to understand the design.
+ Explain spatial and or temporal structure of the data and describe sources
+ of calibration and sampling uncertainty.
+ 
+\end_layout
+
+\begin_layout Subsection
+Model
+\end_layout
+
+\begin_layout Standard
+Write and explain the deterministic model (or models if you plan model selection
+) that expresses your ideas about way a process works.
+ Most of these are likely to be from the general linear model family.
+ Others may be more specialized.
+ 
+\end_layout
+
+\begin_layout Standard
+Write the proportionality between the posterior and joint distributions.
+ I urge you to strive for a model that is hierarchical in some fashion because
+ this has been the emphasis of the course.
+ You may include a Bayesian network as part of the description if you like,
+ but I want to see that diagram translated into fully specified math, including
+ your choices of distributions for likelihoods, latent quantities, and priors.
+\end_layout
+
+\begin_layout Standard
+I will not insist that you deal with spatial autocorrelation if your data
+ are spatially structured because we will not cover this material until
+ the end of the course.
+ That said, I will be impressed and forgiving if you take this on.
+\end_layout
+
+\begin_layout Subsection
+Analysis
+\end_layout
+
+\begin_layout Standard
+Write a section that describes the computational procedures you will use,
+ tests for convergence, and posterior predictive checks.
+ Describe any important derived quantities.
+ This should read the section you would write for a paper to be submitted
+ to a journal.
+ Consult published Bayesian papers for examples.
+ 
+\end_layout
+
+\begin_layout Section
+Format
+\end_layout
+
+\begin_layout Description
+Length: No more than four pages, excluding a few literature citations.
+ I expect that three pages will usually suffice.
+\end_layout
+
+\begin_layout Description
+Document: You may prepare this document in R Markdown, LyX or LaTeX compiled
+ to a .pdf file.
+ Word documents will not be accepted.
+ 
+\end_layout
+
+\begin_layout Description
+Math: All mathematics must be properly formatted using LaTeX.
+ Pay close attention to the instructions for notation in the R Markdown
+ handout I gave early in the course.
+ Posterior and joint distributions will need to be written in the LaTeX
+ equation array or align environment as illustrated in that handout.
+ The math should look crisp and sharp.
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+vspace {1 in}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Writing: Here are a few tips on grammar, usage, and clarity.
+\end_layout
+
+\begin_layout Itemize
+Every paragraph must announce its purpose with a topic sentence.
+\end_layout
+
+\begin_layout Itemize
+Minimize use of leading, dependent clauses.
+ No more than three in the entire document, please.
+ Simple declarative sentences are best until you can write like John McPhee.
+ 
+\end_layout
+
+\begin_layout Itemize
+Usage and grammar
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Although instead of while
+\end_layout
+
+\begin_layout Itemize
+Because instead of since
+\end_layout
+
+\begin_layout Itemize
+That for defining clauses; which for describing clauses
+\end_layout
+
+\begin_layout Itemize
+Never, ever, ever use 
+\begin_inset Quotes eld
+\end_inset
+
+respectively.
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Fewer to compare things counted; less for continuous variables
+\end_layout
+
+\begin_layout Itemize
+Data is the plural of datum.
+ The data are; never the data is.
+ 
+\end_layout
+
+\begin_layout Itemize
+Avoid use of multi-word nouns, e.g., use 
+\begin_inset Quotes eld
+\end_inset
+
+procedures for managing invasive plants
+\begin_inset Quotes erd
+\end_inset
+
+ in favor of 
+\begin_inset Quotes eld
+\end_inset
+
+invasive plant management procedures
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Avoid unfamiliar acronyms.
+ They are a false economy.
+ Better to use more words than to irritate the reader with mysterious, forgettab
+le abbreviations.
+\end_layout
+
+\end_deeper
+\end_body
+\end_document
