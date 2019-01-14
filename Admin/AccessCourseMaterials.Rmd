@@ -81,7 +81,7 @@ Open terminal/bash and navigate to the directory where you would like to hold th
 2.  To clone the course repository into your current directory paste the following into your terminal/bash window: 
 
     ```bash
-    git clone https://github.com/nthobbs50/ESS_575_2017.git
+    git clone https://github.com/nthobbs50/ESS_575_2019.git
     ```
 
 <br>
@@ -96,7 +96,7 @@ I will add and modify course material frequnetly. I urge you to update the cours
 
     ```bash
     cd
-    cd ESS_575_2017
+    cd ESS_575_2019
     ```
     
 3.  Paste the following into the terminal/bash:
@@ -109,9 +109,9 @@ I will add and modify course material frequnetly. I urge you to update the cours
 
 #### V. EXTREMELY IMPORTANT: Using git course materials 
 
-Each time you ``pull`` and updated version of the course repository your local machine will have a clean (untouched) copy of **all** course materials.  **Therefore, if you modify the course materials it is extremely important that you save your work under a different name.**  If you fail to save your work with a new name, your work will be lost the next time you ``pull`` to get the most up-to-date materials. Where you choose to save your work doesn't matter. You can choose a brand new directory or you can save within the directory that you've created for our course ``ESS_575_2017``. 
+Each time you ``pull`` and updated version of the course repository your local machine will have a clean (untouched) copy of **all** course materials.  **Therefore, if you modify the course materials it is extremely important that you save your work under a different name.**  If you fail to save your work with a new name, your work will be lost the next time you ``pull`` to get the most up-to-date materials. Where you choose to save your work doesn't matter. You can choose a brand new directory or you can save within the directory that you've created for our course ``ESS_575_2019``. 
 
-Inevitably, you will make an inadvertent or deliberate change to a file in the course materials stored in the `ESS_575_2017`  folder. In this case, your ``pull`` will fail.  To remedy this:
+Inevitably, you will make an inadvertent or deliberate change to a file in the course materials stored in the `ESS_575_2019`  folder. In this case, your ``pull`` will fail.  To remedy this:
 
 1.  You'll need to open your terminal/bash.
 
@@ -134,14 +134,14 @@ I have prepared an R package that contains all the data you will need to complet
 
     ```bash
     cd
-    cd ESS_575_2017
+    cd ESS_575_2019
     ```
 3.  Open R from the command line by type.
 
     ```bash
     R
     ```
-4. Run the following line of code in R to install the ``ESS575`` package from source. You can also install it using the same command directly in RStudio but you will need to write the full path to the file or set the working directory to ``rootPath/ESS_575_2017``.
+4. Run the following line of code in R to install the ``ESS575`` package from source. You can also install it using the same command directly in RStudio but you will need to write the full path to the file or set the working directory to ``rootPath/ESS_575_2019``.
 
     ```bash
     install.packages("Admin/ESS575_0.1.0.tar.gz", repos = NULL, type = "source")
