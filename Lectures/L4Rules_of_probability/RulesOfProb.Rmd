@@ -1,0 +1,204 @@
+---
+title: "Rules of Probability"
+author: "N. Thompson Hobbs"
+date: "January 2019"
+output: 
+  beamer_presentation:
+    includes:
+      in_header: header.tex
+theme: Boadilla
+subtitle: ESS 575 Models for Ecoloical Data
+latex_engine: xelatex
+transition: fastest
+---
+
+``` {r, eval = TRUE, echo = FALSE,}
+#library(shape)
+```
+## A line of inference
+\includegraphics[height=.75in]{ConceptsTheory.png}
+
+##Insight in science
+\includegraphics[height=2in]{ScientificInference.png}
+
+## Road map for today
+- Rules of probability
+- Factoring joint probabilities
+- Directed acyclic graphs (a.k.a. Bayesian networks)
+
+## *All* of Bayesian inference extends from three rules of probability
+
+1. Conditional probability (and independence)
+2. The law of total probability
+3. The chain rule of probability
+
+
+## Random variables
+The world can be divided into things that are observed and things that are unobserved.  
+
+1. Bayesians treat all unobserved quantities as *random varialbes*.
+2. The values of random variables are governed by chance.
+3. Probability distributions describe "governed by chance."
+4. A specific value of a random variable is called an event or an outcome.
+
+## S=Sample Space
+
+- The set of all possible values of a random variable. 
+- The sample space, $S$ has a specific area.
+
+\includegraphics[height=1.25in]{S.png}
+
+## Events in S
+
+- Can define and event, $A$.
+- The area of event $A$ is less than $S$.
+
+\includegraphics[height=1.25in]{eventA.png}
+
+## What is the probability of event A?
+
+\includegraphics[height=1.25in]{eventA.png}
+
+$\Pr(A) = \frac{\text{Area of}~A}{\text{Area of}~S}$
+
+
+
+## Conditional Probability
+
+*Conditional probability*: the probability of an event given that _we know_ another event has occurred.
+
+\includegraphics[height=1.25in]{eventB.png}
+
+
+
+## Conditional Probability
+What is the probability of event $B$, given that event $A$ has occurred?
+
+
+
+\includegraphics[height=1.25in]{eventB.png}
+
+$\Pr(B|A)$ = probability of $B$ conditional on knowing $A$ has occurred
+
+$Pr(B|A) = \frac{\text{Joint Probability}}{\text{Probability of A}}=\frac{\Pr(A,B)} {\Pr(A)}$
+
+## Conditional Probability
+What is the probability of event $A$, given that event $B$ has occurred?
+
+\includegraphics[height=1.25in]{eventB.png}
+
+## Independence
+
+Event $A$ and $B$ are *independent* If the occurrence of event A does not tell us anything about event B.
+
+Events are independent if and only if:
+
+$\Pr(A|B) = \Pr(A)$
+
+$\Pr(B|A) = \Pr(B)$
+
+## Independence
+
+
+\includegraphics[height=2.25in]{rect3823.png}
+
+$\Pr(A|B) = \frac{\text{area of A and B}}{\text{area of B}}=\frac{\text{area of A}}{\text{area of S}}$
+
+
+
+
+##Independence
+
+Show that  $\Pr(A,B)=Pr(A)Pr(B)$
+using the definition of conditional probability and independence.
+
+
+
+
+## The Law of Total Probability
+
+\includegraphics[height=1.25in]{totalProb.png}
+
+We can define a set of events $\{B_n : n = 1,2,3,...\}$, which taken together define the entire sample space, $\sum_n B_n = S$.
+
+## What is the probability of event A?
+
+\includegraphics[height=1.25in]{totalProb.png}
+
+$\Pr(A) = \sum_n \Pr(A|B_n)\Pr(B_n)$ (discrete case)
+
+$\Pr(A) = \int \Pr(A|B)\Pr(B) dB$ (continuous case)
+
+
+##Chain rule of probability
+Board work
+
+## The Chain Rule of Probability 
+The chain rule of probability allows us to calculate any number of joint distributions using only conditional probabilities.
+
+\vspace{.5cm}
+
+$$\Pr(z_1,z_2,...,z_n) = \Pr(z_n|z_{n-1},...,z_1) ... \Pr(z_3|z_2,z_1)\Pr(z_2|z_1)\Pr(z_1)$$
+
+\vspace{.5cm}
+
+Notice the pattern here.
+
+- z’s can be scalars or vectors.
+- Sequence of conditioning does not matter.
+- When we build models, we choose a sequence that makes sense.
+
+
+## Factoring joint probabilities
+
+Why is factoring useful?
+
+- Factoring joint distributions is how we build Bayesian models. 
+- The rules of probability allow us to simplify complicated joint. distributions, breaking them down into chunks.
+- Chunks can be analyzed one at a time.
+
+
+
+
+## Consider a factored joint distribution represented by a directed acyclic graph (DAG)
+
+\centerline{\includegraphics[height=.8in]{DAG_and_dist.png}}
+
+ - Directed acyclic graphs (aka Bayesian networks) specify how joint distributions are factored into conditional distributions using nodes to represent RV's and arrows to represent dependencies.
+- Nodes at the heads of arrows _must_ be on the left hand side of the conditioning symbols;
+- Nodes at the tails of arrows are on the right hand side of the conditioning symbols.
+- Any node at the tail of an arrow without and arrow leading into it must be expressed unconditionally.
+- Nodes at heads of arrows are called "children"; at tails, "parents."
+
+## Factoring with DAGs at the board
+
+<!-- ## Factoring with DAGs -->
+
+<!-- \centerline{\includegraphics[height=.8in]{factoringI}} -->
+
+<!-- $\Pr(A,B) =$ -->
+
+<!-- ## Factoring with DAGs -->
+
+<!-- \centerline{\includegraphics[height=.8in]{factoringI}} -->
+
+<!-- $\Pr(A,B) = \Pr(A|B) \Pr(B)$ -->
+
+<!-- ## Factoring with DAGs -->
+
+<!-- \centerline{\includegraphics[height=.8in]{abcDag}} -->
+
+<!-- $\Pr(A,B,C) =$ -->
+
+<!-- ## Factoring with DAGs -->
+
+<!-- \centerline{\includegraphics[height=.8in]{abcDag}} -->
+
+<!-- $\Pr(A,B,C) = \Pr(A|B,C)\Pr(B|C)\Pr(C)$ -->
+
+## Factoring joint probabilities
+Illustrate with simple regression model on board.
+
+## Work on lab
+Complete parts I-VI
+
