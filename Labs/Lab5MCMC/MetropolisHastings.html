@@ -141,8 +141,8 @@ MathJax.Hub.Config({
 <div id="mcmc-using-metropolis-and-metropolis-hastings-steps" class="section level4">
 <h4>MCMC using Metropolis and Metropolis-Hastings Steps</h4>
 </div>
-<div id="february-27-2019" class="section level4">
-<h4>February 27, 2019</h4>
+<div id="february-28-2019" class="section level4">
+<h4>February 28, 2019</h4>
 <hr />
 </div>
 <div id="table-of-contents" class="section level4">
@@ -167,9 +167,9 @@ MathJax.Hub.Config({
 <h4>I. Introduction</h4>
 <p>The purpose of this lab is to learn how Markov chain Monte Carlo (MCMC) algorithm approximate the marginal posterior distributions of parameters using accept-reject sampling implemented with Metropolis and Metropolis-Hastings steps. Accept-reject sampling is critical in ecology and social science because many of our most important models are non-linear. In these cases, Gibbs steps, which you used in the previous lab, will not work.</p>
 <p>My goal in preparing this lab was to was to write math, code, and explanatory text that I wished I had when I struggled to learn this material. I have taught this lab a least a dozen times. One of the things I have learned is that students are usually poorly trained programmers and their inevitable programming errors interfere with a big picture, experiential understanding of MCMC. They get lost in the arcane details of debugging and wish that MCMC would just go away and leave them alone forever.</p>
-<p>So, I am trying something different this time. I have provided a set of tested, general functions that can be easily modified for different problems and that provides a useful, instructional framework. The functions are not intended to be a bullet-proof package, but rather a general framework for implementing the MCMC sampling that can be tweaked (or crow-barred) to work for a broad range of problems. The functions in the toolbox provide a nice pedagogical construct for linking math, code, and concepts by creating a point of focus for different steps in Metropolis-Hastings algorithm using the light limitation of trees problem (from the likelihood lab) as an example.</p>
-<p>As an added benefit, the functions offers a a reasonable illustration of structured programming. This is a powerful approach that systems engineers and professional programers use all the time. Basically, the idea is to break all problems into a series of relatively small, tested functions and then assemble the functions to complete the overall task. If you find yourself writing a hundred lines of code without structuring your work into functions, then you are almost guaranteed to encounter nasty bugs. Professionals do it differently for a reason. Structured code is less prone to errors, easier to debug, and more transparent.</p>
-<p>For this lab to be successful, you must understand R functions and how they are invoked. The concept of arguments and how they work is absolutely critical.</p>
+<p>I am trying something different this time. I have provided a set of tested, general functions that can be easily modified for different problems and that provides a useful, instructional framework. The functions are not intended to be a bullet-proof package, but rather a general framework for implementing the MCMC sampling that can be tweaked (or crow-barred) to work for a broad range of problems. The functions in the toolbox provide a nice pedagogical construct for linking math, code, and concepts by creating a point of focus for different steps in Metropolis-Hastings algorithm using the light limitation of trees problem (from the likelihood lab) as an example.</p>
+<p>The functions offers a a reasonable illustration of structured programming. This is a powerful approach that systems engineers and professional programers use all the time. The idea is to break all problems into a series of relatively small, tested functions and then assemble the functions to complete the overall task. If you find yourself writing a hundred lines of code without structuring your work into functions, then you are almost guaranteed to encounter nasty bugs. Professionals do it differently for a reason. Structured code is less prone to errors, easier to debug, and more transparent.</p>
+<p>You must understand R functions and how they are invoked if you are to succeed in this lab. The concept of arguments and how they work is absolutely critical.</p>
 </div>
 <div id="ii.-overview-of-the-mcmc-algorrithm" class="section level4">
 <h4>II. Overview of the MCMC algorrithm</h4>
