@@ -251,13 +251,13 @@ g(a,b,x_i) &amp;= a+bx_i \\
 &amp;\times \text{normal}(a\mid 0,\tau_b)\text{normal}(b \mid 0,\tau_a)\\
 &amp;\times\text{gamma}(\tau\mid \alpha, \beta)
 \end{align}\]</span>
-The parameters for priors <span class="math inline">\((\alpha, \beta, \tau, \tau_a, \tau_b)\)</span>, of course, must be given numeric values. Note that The quantities <span class="math inline">\(\tau, \tau_a, \tau_b\)</span> are precisions, the inverses of the variances. It can be show that the full conditionals for the parameters in this model can be simplified to conjugates, allowing sampling from
+The parameters for priors <span class="math inline">\((\alpha, \beta, \tau_a, \tau_b)\)</span>, of course, must be given numeric values. Note that The quantities <span class="math inline">\(\tau, \tau_a, \tau_b\)</span> are precisions, the inverses of the variances. It can be show that the full conditionals for the parameters in this model can be simplified to conjugates, allowing sampling from
 <span class="math display">\[\begin{align}
 [a|.] &amp;\sim \text{normal}\left(\frac{\tau}{n\tau+\tau_a}\sum_{i=1}^n(y_i-bx_i),\frac{1}{n\tau+\tau_a}   \right)\\
 [b\mid .] &amp;\sim \text{normal} \left(\frac{\tau\sum_{i=1}^n(y_i-a)x_i}{\tau\sum_{i=1}^nx^2+\tau_b},\frac{1}{\tau\sum_{i=1}^nx_i^2 + \tau_b}             \right)\\
 [\tau \mid .] &amp;\sim \text{gamma}\left(\alpha+n/2, \beta + \frac{1}{2}\sum_{i=1}^n(y_i-a-bx_i)^2     \right)
 \end{align}\]</span>
-<p>This is a new problem that has not yet be vetted. It is optional. Consult with me if you seem to be running into problems. You will get the full extra credit for a strong effort at this one, and I will be grateful to you for helping me test it. I would also like youe opinion on its value.</p>
+<p>This is a new problem that has not yet be vetted. It is optional. Consult with me if you seem to be running into problems. You will get the full extra credit for a strong effort at this one, and I will be grateful to you for helping me test it. I would also like your opinion on its value.</p>
 <p>We first grab some fake data on the relationship between plant growth and tannin content. We do a simple <code>lm</code> in R to find maximum likelihood estimates of the parameters</p>
 <pre class="r"><code>data2=data.frame(growth=c(12,10,8,11, 6,7), tannin=0:5)
 plot(data2$tannin, data2$growth, xlab = &quot;Tannins&quot;, ylab=&quot;Plant growth&quot;)</code></pre>
