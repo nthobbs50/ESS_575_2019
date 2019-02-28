@@ -152,8 +152,8 @@ MathJax.Hub.Config({
 <div id="markov-chain-monte-carlo" class="section level4">
 <h4>Markov chain Monte Carlo</h4>
 </div>
-<div id="february-27-2019" class="section level4">
-<h4>February 27, 2019</h4>
+<div id="february-28-2019" class="section level4">
+<h4>February 28, 2019</h4>
 <hr />
 </div>
 <div id="table-of-contents" class="section level4">
@@ -169,6 +169,7 @@ MathJax.Hub.Config({
 <div id="i.-motivation" class="section level4">
 <h4>I. Motivation</h4>
 <p>This problem challenges you to understand how the Markov chain Monte Carlo algorithm takes a multivariate joint distribution and breaks it into a series of univariate, marginal distributions that can be approximated one at a time. There are only two unknowns in this problem, but the same principles and approach would apply if there were two hundred. The accompanying document, MCMCMath.pdf, describes the math that stands behind the coding that you will do here. You should study this thoroughly before proceeding.</p>
+<p>Add stuff on model and conjugate distribtuions here</p>
 <p><br></p>
 </div>
 <div id="ii.-problem" class="section level4">
@@ -179,13 +180,13 @@ MathJax.Hub.Config({
 <div id="iii.-preliminaries" class="section level4">
 <h4>III. Preliminaries</h4>
 <ol style="list-style-type: decimal">
-<li><p>Set the seed for random numbers = 13 in R with <code>set.seed(1)</code>.</p></li>
+<li><p>Set the seed for random numbers = 13 in R with <code>set.seed(13)</code>.</p></li>
 <li><p>Load the <code>actuar</code> library, which contains functions for inverse gamma distributions needed in step 4.</p></li>
 <li><p>Simulate 100 data points from a normal distribution with mean <span class="math inline">\(\theta = 100\)</span> and variance <span class="math inline">\(\varsigma^{2} = 25\)</span>. Call the data set <code>y</code>. Be careful here. R requires the standard deviation, not the variance, as a parameter. You will use these “fake” data to verify the Gibbs sampler you will write below. Simulating data is always a good way to test methods. Your method should be able to recover the generating parameters given a sufficiently large number of simulated observations.</p></li>
 <li><p>Write a function called <code>draw_mean</code> that computes the parameters of the posterior distributions for <span class="math inline">\(\theta\)</span> using a normal-normal conjugate relationship where the variance is assumed to be known. The function returns a draw from that distribution. Study the notes relative to this function.</p></li>
 <li><p>Write a function called <code>draw_var</code> that computes the parameters of the posterior distributions for <span class="math inline">\(\varsigma^2\)</span> using a inverse gamma-normal conjugate relationship where the mean is assumed to be known. The function returns a draw from that distribution.</p></li>
 </ol>
-<p>Check the functions by simulating a large number of data points from a normal distribution using a mean and variance of your own choosing. Store the data points in a vector called <code>y_check</code>.</p>
+<p>Check the functions by simulating a large number of data points from a normal distribution using a mean and variance of your own choosing. Store the data points in a vector called <code>y_check</code>. Assume flat priors for the mean and the variance.</p>
 <p><br></p>
 </div>
 <div id="iv.-writing-a-sampler" class="section level4">
@@ -246,17 +247,17 @@ MathJax.Hub.Config({
 A model for a simple linear regression with support including all real numbers is
 <span class="math display">\[\begin{align}
 g(a,b,x_i) &amp;= a+bx_i \\
-[a,b,\sigma^2|\mathbf{y}]&amp;\propto\prod_{i=1}^n\text{normal}(g(a,b,x_i),\sigma^2)\\
-&amp;\times \text{normal}(a|0,1000)\text{normal}(b|0,1000)\\
-&amp;\times\text{gamma}(\sigma^{-2}\mid.001,.001)
+[a,b,\sigma^2|\mathbf{y}]&amp;\propto\prod_{i=1}^n\text{normal}(g(a,b,x_i),\tau)\\
+&amp;\times \text{normal}(a\mid 0,\tau_b)\text{normal}(b \mid 0,\tau_a)\\
+&amp;\times\text{gamma}(\tau\mid \alpha, \beta)
 \end{align}\]</span>
-The parameters for priors, of course, must be given numeric values. The quantities <span class="math inline">\(\tau, \tau_a, \tau_b\)</span> are precisions, the inverses of the variances. It can be show that the full conditionals for the parameters in this model can be simplified to conjugates, allowing sampling from
+The parameters for priors <span class="math inline">\((\alpha, \beta, \tau, \tau_a, \tau_b)\)</span>, of course, must be given numeric values. Note that The quantities <span class="math inline">\(\tau, \tau_a, \tau_b\)</span> are precisions, the inverses of the variances. It can be show that the full conditionals for the parameters in this model can be simplified to conjugates, allowing sampling from
 <span class="math display">\[\begin{align}
 [a|.] &amp;\sim \text{normal}\left(\frac{\tau}{n\tau+\tau_a}\sum_{i=1}^n(y_i-bx_i),\frac{1}{n\tau+\tau_a}   \right)\\
 [b\mid .] &amp;\sim \text{normal} \left(\frac{\tau\sum_{i=1}^n(y_i-a)x_i}{\tau\sum_{i=1}^nx^2+\tau_b},\frac{1}{\tau\sum_{i=1}^nx_i^2 + \tau_b}             \right)\\
 [\tau \mid .] &amp;\sim \text{gamma}\left(\alpha+n/2, \beta + \frac{1}{2}\sum_{i=1}^n(y_i-a-bx_i)^2     \right)
 \end{align}\]</span>
-<p>This is a new problem that has not yet be vetted. It is optional. Consult with me if you seem to be running into problems. You will get the full extra credit for a strong effort at this one, and I will be grateful to you for helping me test it. I would also like you opinion on its value.</p>
+<p>This is a new problem that has not yet be vetted. It is optional. Consult with me if you seem to be running into problems. You will get the full extra credit for a strong effort at this one, and I will be grateful to you for helping me test it. I would also like youe opinion on its value.</p>
 <p>We first grab some fake data on the relationship between plant growth and tannin content. We do a simple <code>lm</code> in R to find maximum likelihood estimates of the parameters</p>
 <pre class="r"><code>data2=data.frame(growth=c(12,10,8,11, 6,7), tannin=0:5)
 plot(data2$tannin, data2$growth, xlab = &quot;Tannins&quot;, ylab=&quot;Plant growth&quot;)</code></pre>
@@ -281,7 +282,7 @@ plot(data2$tannin, data2$growth, xlab = &quot;Tannins&quot;, ylab=&quot;Plant gr
 ## Multiple R-squared:  0.5898, Adjusted R-squared:  0.4872 
 ## F-statistic: 5.751 on 1 and 4 DF,  p-value: 0.0745</code></pre>
 <pre class="r"><code>#growth.lm=lm.bayes(y=data2[,1], x=data2[,2], tau.a=0.001, tau.b=0.001, niter=10000)</code></pre>
-<p>Construct a Gibbs sampler with a single chain for each parameter to approximate their marginal posterior distributions. Assume numeric values for parameters of priors <span class="math inline">\(\alpha=\beta=\tau_a=\tau_b =.001\)</span> Compare with parameter estimates obtained by <code>lm</code>.</p>
+<p>Use these data to construct a Gibbs sampler with a single chain for each parameter to approximate their marginal posterior distributions. Assume numeric values for parameters of priors <span class="math inline">\(\alpha=\beta=\tau_a=\tau_b =.001\)</span> Compare with parameter estimates obtained by <code>lm</code>.</p>
 </div>
 </div>
 
