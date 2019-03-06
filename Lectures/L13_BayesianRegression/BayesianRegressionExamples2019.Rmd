@@ -1,0 +1,166 @@
+---
+title: "Bayesian Regression"
+author: "N. Thompson Hobbs"
+date: "March 21 2017"
+output:
+  beamer_presentation:
+    includes:
+      in_header: header.tex
+  ioslides_presentation: default
+subtitle: ESS 575 Models for Ecological Data
+theme: Boadilla
+latex_engine: xelatex
+transition: fastest
+---
+
+
+
+## Normal data, continuous and real valued
+
+\small
+\begin{eqnarray}
+\big[\beta_{0},\beta_{1},\sigma \mid \mathbf{y}] & \propto & \prod_{i=1}^{n}\textrm{normal}\big(y_{i} \mid g\big(\beta_{0},\beta_{1},x_{i}), \sigma^{2}) \times \nonumber \\
+& & \textrm{normal}\big(\beta_{0}\mid 0, 1000)\,\textrm{normal}\big(\beta_{1}\mid 0, 1000)\times \nonumber \\
+& &\textrm{uniform}\big(\sigma \mid 0, 100) \nonumber  \\
+g\big(\beta_{0},\beta_{1},x_{i})& = &\beta_{0}+\beta_{1}x_{i} \nonumber 
+\end{eqnarray}
+
+```{r, include = TRUE, echo = TRUE, eval= FALSE}
+b0 ~ dnorm(0, .001)
+b1 ~ dnorm(0, .001)
+sigma ~ dunif(0, 100)
+tau <- 1/sigma^2
+for (i in 1:length(y)){
+  mu[i] <- b0 + b1 * x[i]
+  y[i] ~ dnorm(mu[i], tau)
+}
+```
+
+## Poisson, discrete and positive
+
+\small
+\begin{eqnarray}
+\big[\beta_{0},\beta_{1} \mid \mathbf{y}] & \propto & \prod_{i=1}^{n}\textrm{Poisson}\big(y_{i} \mid g\big(\beta_{0},\beta_{1},x_{i})) \times \nonumber \\
+& & \textrm{normal}\big(\beta_{0}\mid 0, 1000)\,\textrm{normal}\big(\beta_{1}\mid 0, 1000) \nonumber \\
+g\big(\beta_{0},\beta_{1},x_{i})& = &e^{\beta_{0}+\beta_{1}x_{i}} \nonumber 
+\end{eqnarray}
+
+```{r, include = TRUE, echo = TRUE, eval= FALSE}
+b0 ~ dnorm(0, .001)
+b1 ~ dnorm(0, .001)
+for(i in 1:length(y)){
+  log(mu[i]) <- b0 + b1 * x[i]
+  y[i] ~ dpois(mu[i])
+}
+```
+
+or
+
+```{r, include = TRUE, echo = TRUE, eval= FALSE}
+mu[i] <- exp(b0 + b1 * x[i])
+y[i] ~ dpois(mu[i])
+```
+
+## Poisson with offset
+$\log(u_i)=\text{\emph{offset} for observation }i$
+\small
+\begin{eqnarray}
+\big[\beta_{0},\beta_{1} \mid \mathbf{y}] & \propto & \prod_{i=1}^{n}\textrm{Poisson}\big(y_{i} \mid g\big(\beta_{0},\beta_{1},x_{i},u_i)) \times \nonumber \\
+& & \textrm{normal}\big(\beta_{0}\mid 0, 1000)\,\textrm{normal}\big(\beta_{1}\mid 0, 1000) \nonumber \\
+g\big(\beta_{0},\beta_{1},x_{i}, u_i\,)& = & u_ie^{\beta_{0}+\beta_{1}x_{i}} \nonumber 
+\end{eqnarray}
+
+```{r, include = TRUE, echo = TRUE, eval= FALSE}
+b0 ~ dnorm(0, .001)
+b1 ~ dnorm(0, .001)
+for(i in 1:length(y)){
+  log(mu[i]) <- log(u[i]) + b0 + b1 * x[i]
+  y[i] ~ dpois(mu[i])
+}
+```
+
+## Bernoulli, data 0 or 1 (aka logistic)
+
+\small
+\begin{eqnarray}
+\big[\beta_{0},\beta_{1} \mid \mathbf{y}] & \propto & \prod_{i=1}^{n}\textrm{Bernoulli}\big(y_{i} \mid g\big(\beta_{0},\beta_{1},x_{i})) \times \nonumber \\
+& & \textrm{normal}\big(\beta_{0}\mid 0, 2)\,\textrm{normal}\big(\beta_{1}\mid 0, 2) \nonumber \\
+g\big(\beta_{0},\beta_{1},x_{i})& = &\cfrac{e^{\beta_{0}+\beta_{1}x_{i}}}{e^{\beta_{0}+\beta_{1}x_{i}} + 1} \nonumber 
+\end{eqnarray}
+
+```{r, include = TRUE, echo = TRUE, eval= FALSE}
+b0 ~ dnorm(0, .5)
+b1 ~ dnorm(0, .5)
+for(i in 1:length(y)){
+  logit(p[i]) <- b0 + b1 * x[i]
+ 	y[i] ~ dbern(p[i]) 
+ }
+```
+
+or
+
+```{r, include = TRUE, echo = TRUE, eval= FALSE}
+p[i] <- inv.logit(b0 + b1 * x[i])
+y[i] ~ dberb(p[i])
+```
+##  Bernoulli, data 0 or 1 (aka logistic)
+\vspace{-1 cm}
+\centerline{
+\includegraphics[width=.75\textwidth]{../Graphics/LogisticRegression.pdf}
+}
+
+
+## lognormal, data continuous and > 0
+
+\small
+\begin{eqnarray}
+\big[\beta_{0},\beta_{1},\sigma \mid \mathbf{y}] & \propto & \prod_{i=1}^{n}\textrm{lognormal}\big(y_{i} \mid \textrm{log}\big(g\big(\beta_{0},\beta_{1},x_{i})\big), \sigma^{2}) \times \nonumber \\
+& & \textrm{normal}\big(\beta_{0}\mid 0, 1000)\,\textrm{normal}\big(\beta_{1}\mid 0, 1000)\times \nonumber \\
+& &\textrm{uniform}\big(\sigma \mid 0, 5) \nonumber  \\
+g\big(\beta_{0},\beta_{1},x_{i})& = &e^{\beta_{0}+\beta_{1}x_{i}} \nonumber 
+\end{eqnarray}
+
+Talk about the interpretation of $\sigma$.
+
+```{r, include = TRUE, echo = TRUE, eval= FALSE}
+b0 ~ dnorm(0, .001)
+b1 ~ dnorm(0, .001)
+sigma ~ dunif(0, 5)
+tau <- 1/sigma^2
+for(i in 1:length(y)){
+  mu[i] <- exp(b0 + b1 * x[i])
+  y[i] ~ dlnorm(log(mu[i]), tau)
+}
+```
+## lognormal, data continuous and > 0
+\vspace{-1 cm}
+\centerline{
+\includegraphics[width=.75\textwidth]{../Graphics/LognormalRegression.pdf}
+}
+
+## lognormal, data continuous and > 0
+
+\small
+\begin{eqnarray*}
+\big[\beta_{0},\beta_{1},\sigma \mid \mathbf{y}] & \propto & \prod_{i=2}^{n}\textrm{lognormal}\big(y_{i} \mid \textrm{log}\big(g\big(\beta_{0},\beta_{1},y_{i-1}, H_{i})\big), \sigma^{2}) \times \\
+& & \textrm{normal}\big(\beta_{0}\mid 0, 1000)\,\textrm{normal}\big(\beta_{1}\mid 0, 1000)\times \\
+& &\textrm{uniform}\big(\sigma \mid 0, 5) \\
+g\big(\beta_{0},\beta_{1},y_{i-1},H_{i})& = & y_{i-1}e^{\beta_{0}+\beta_{1}y_{i-1}} - H_{i} 
+\end{eqnarray*}
+
+Talk about the bounding trick.
+
+```{r, include = TRUE, echo = TRUE, eval= FALSE}
+b0 ~ dnorm(0, .001)
+b1 ~ dnorm(0, .001)
+sigma ~ dunif(0, 5)
+tau <- 1/sigma^2
+for(i in 2:length(y)){
+  mu[i] <- y[i-1] * exp(b0 + b1 * y[i-1]) - H[i]
+  y[i] ~ dlnorm(log(max(.000001, mu[i])), tau)
+}
+```
+
+
+
+
