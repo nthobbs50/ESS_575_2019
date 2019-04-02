@@ -67,6 +67,7 @@ lines(data.list$x1.hat, HPDI$mu.hat.fixed[,2], lty="dashed", col = "blue")
 
 
 matplot(x1,y, pch=19, cex=.5, main = "Prediction of new observation across specific sites")
+plot
 lines(data.list$x1.hat,med$y.new.fixed, type="l", col = "red")
 lines(data.list$x1.hat, HPDI$y.new.fixed[,1], lty="dashed", col = "blue") 
 lines(data.list$x1.hat, HPDI$y.new.fixed[,2], lty="dashed", col = "blue") 
