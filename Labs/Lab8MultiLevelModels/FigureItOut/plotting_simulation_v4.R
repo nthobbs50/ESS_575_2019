@@ -14,7 +14,7 @@ muB0 = .4
 sdB0 = .1
 
 n.x=10
-n.groups = 15
+n.groups = 5
 
 ###need different x's for different sites
 x = seq(1,n.x)
