@@ -1,0 +1,89 @@
+%% LyX 2.2.1 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[11pt,american]{article}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\usepackage[letterpaper]{geometry}
+\geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in,footskip=1cm}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{setspace}
+\usepackage[authoryear]{natbib}
+\doublespacing
+
+\makeatletter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+%% Because html converters don't know tabularnewline
+\providecommand{\tabularnewline}{\\}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\makeatother
+\usepackage{graphicx}
+\usepackage{lineno,setspace}
+%\linenumbers
+\usepackage[small,compact]{titlesec}
+\usepackage[small,it]{caption}
+%\addtolength{\textfloatsep}{-20mm}
+%\doublespace
+\addtolength{\belowcaptionskip}{-3mm}
+%\addtolength{\abovecaptionskip}{-3mm}
+\usepackage{enumitem} % load the package
+\usepackage{bm}
+\usepackage{calc}
+\usepackage{rotating}
+
+
+
+\addtolength{\intextsep}{-3mm}
+
+\usepackage{fancyheadings}
+\usepackage{url}
+%\usepackage[tablesfirst,notablist]{endfloat}
+
+\renewcommand{\bibsection}{\noindent{\textbf{{Literature Cited}}}}
+
+\makeatother
+
+\usepackage{babel}
+\begin{document}
+\begin{tabular}{|c|c|}
+\hline 
+Coefficient & Interpretation\tabularnewline
+\hline 
+\hline 
+$\beta_{1,1}$ & Effect of level one of treatment $\beta_{1}$\tabularnewline
+\hline 
+$\beta_{1,2}$ & Effect of level two of treatment $\beta_{1}$\tabularnewline
+\hline 
+$\beta_{2,1}$ & Effect of level one of treatment $\beta_{2}$\tabularnewline
+\hline 
+$\beta_{2,2}$ & Effect of level two of treatment $\beta_{2}$\tabularnewline
+\hline 
+\end{tabular}
+
+\bigskip
+
+Data matrix
+
+\begin{tabular}{|c|c|c|}
+\hline 
+Response & Index for $\beta_{1}$ & Index for $\beta_{2}$\tabularnewline
+\hline 
+\hline 
+$y_{1}$ & 1 & 1\tabularnewline
+\hline 
+$y_{2}$ & 1 & 2\tabularnewline
+\hline 
+$y_{3}$ & 2 & 1\tabularnewline
+\hline 
+$y_{4}$ & 2 & 2\tabularnewline
+\hline 
+. & . & .\tabularnewline
+\hline 
+. & . & .\tabularnewline
+\hline 
+$y_{n}$ & 2 & 2\tabularnewline
+\hline 
+\end{tabular}
+\end{document}

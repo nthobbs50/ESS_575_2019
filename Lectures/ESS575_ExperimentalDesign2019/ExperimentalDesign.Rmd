@@ -1,0 +1,341 @@
+---
+title: "Design Matrices and Experimental Data"
+author: "N. Thompson Hobbs and Christian Che-Castaldo"
+date: "April 16, 2019"
+output: 
+  beamer_presentation:
+    includes:
+      in_header: header.tex
+theme: Boadilla
+subtitle: Bayesian Modeling for Socio-Environmental Data
+latex_engine: xelatex
+transition: fastest
+---
+
+## Analyzing experimental data: Why Bayes?
+
+\centerline{\includegraphics[height=2.75in]{SokalandRolf.png}}
+
+## Experimental designs expressed as joint distributions
+
+\centerline{\includegraphics[height=1.25in]{ExperimentalPlot.jpg}}
+
+\small
+\begin{eqnarray}
+\big[\alpha,\boldsymbol{\beta},\sigma \mid \mathbf{y}\big] & \propto & \prod_{i=1}^{N}\prod_{j=1}^{M}\textrm{normal}\big(y_{i,j} \mid g\big(\alpha,\boldsymbol{\beta},x_{i,j},w_{i,j}\big), \sigma^{2}\big) \times \nonumber \\
+& & \textrm{normal}\big(\alpha \mid 0, 1000\big)\,\textrm{normal}\big(\beta_{1}\mid 0, 1000\big)\times \nonumber \\
+& &\textrm{normal}\big(\beta_{2}\mid 0, 1000\big)\, \textrm{uniform}\big(\sigma \mid 0, 100\big) \nonumber  \\
+g\big(\alpha,\beta,x_{i,j},w_{i,j}\big)& = &\alpha + \beta_{1} x_{i,j} + \beta_{2} w_{i,j} \nonumber 
+\end{eqnarray}
+
+\vspace{3mm}
+\tiny{Photo c/o of the Minnesota Agricultural Experiment Station at http://www.maes.umn.edu.}
+
+## Design matrix: What is this?
+
+\centerline{\includegraphics[height=1.75in]{QuantitativeDesignMatrix.png}}
+
+\vspace{5mm}
+- Great! But how do we handle categorical experimental treatments?
+
+## Parameterize a model with categorical predictors
+
+\centerline{\includegraphics[height=2.75in]{Parameterizations.png}}
+
+## Simulate data for CRD Design
+
+- Completely randomized design (CRD) with 1 factor and 5 levels
+- Simulate data for a factor with 5 levels
+- 10 replicates per level, 50 replicates overall
+
+``` {r, fig.width = 3.25, fig.height = 3.25, fig.align = 'center', eval = TRUE, include = TRUE, echo = FALSE}
+level.means <- c(20,23,25,31,17)
+levels <- length(level.means)
+reps <- 10
+sigma <- 5
+n <- levels * reps
+eps <- rnorm(n, 0, sigma)
+x <- rep(1:levels, rep(reps, levels)) 
+means <- rep(level.means, rep(reps, levels))
+X <- as.matrix(model.matrix(~ as.factor(x)-1)) 
+y <- as.numeric(X %*% as.matrix(level.means) + eps)
+par(mfrow=c(1,1))
+boxplot(y~x, col="grey", xlab="Level", ylab="Response", main="", las = 1)
+```
+
+## Parameterize a model with categorical predictors
+
+\centerline{\includegraphics[height=2.75in]{Parameterizations.png}}
+
+## Cell Means Model: Joint and DAG
+
+\centerline{\includegraphics[height=1.5in]{CellMeansJointDAG.png}}
+
+- Interest in group means and not effects
+- Have prior information for group means
+- Lack prior information for group means - use vague priors
+- Number of parameters = number of unknowns 
+- Recover effects or grand mean as derived quantities
+
+## Cell Means Model: Design Matrix
+
+\centerline{\includegraphics[height=1.5in]{CellMeansDesignMatrix.png}}
+
+## Cell Means Model: JAGS
+
+\tiny
+```{r, include = TRUE, echo = TRUE, eval= FALSE}
+#priors
+for (i in 1:5) {
+  alpha[i] ~ dnorm(0, 0.001)
+}
+sigma ~ dunif(0, 100)
+tau <- 1 / ( sigma * sigma)
+
+# Likelihood
+for (i in 1:50) {
+  y[i] ~ dnorm(alpha[x[i]], tau) 
+}
+
+# Derived quantities
+effect.2.1 <- mu[2] - mu[1]
+effect.3.1 <- mu[3] - mu[1]
+grandMean <- mean(mu[])
+```
+
+\normalsize
+
+- Use the index trick!
+- Compute effects and grand mean as derived quantities
+
+## Parameterize a model with categorical predictors
+
+\centerline{\includegraphics[height=2.75in]{Parameterizations.png}}
+
+## Effects Models - Set to Zero: Joint and DAG
+
+\centerline{\includegraphics[height=1.35in]{EffectsModelJointDAG.png}}
+
+- Interest in effects and not means
+- Have prior information for effect sizes
+- Lack prior information for effect sizes - can estimate conservatively
+- Number of parameters > number of unknowns requires constraint
+- Recover group means as derived quantities
+
+## Effects Model- Set to Zero: Design Matrix
+
+\centerline{\includegraphics[height=1.35in]{EffectsSetZeroDesignMatrix.png}}
+
+\vspace{5mm}
+- CRD with 1 factor and 5 levels
+- Remove parameter by setting  $\alpha_{5}=0$
+- Group 5 is now represented by intercept $\mu$
+- $\alpha_{j}$ represent deviations from this baseline/control group
+
+## Effects Models - Set to Zero: JAGS
+
+\tiny
+``` {r, eval=FALSE}
+# Priors
+for (i in 1:4){
+  alpha[i] ~ dnorm(0, 0.001)
+}
+mu ~ dnorm(0, 0.001)
+sigma ~ dunif(0, 100)
+tau <- 1 / ( sigma * sigma)
+
+# Likelihood
+for (i in 1:50) {
+  y[i] ~ dnorm(yhat[i], tau) 
+  yhat[i] <- mu + alpha[1]*treatment1[i] + alpha[2]*treatment2[i] + alpha[3]*treatment3[i] + 
+    alpha[4]*treatment4[i]
+}
+
+# Derived quantities
+cell[5] <- mu
+for (i in 1:4){
+  cell[i] <- mu + alpha[i]
+}
+grandMean <- mean(cell[])
+```
+
+\normalsize
+
+- Compute cell and grand means as derived quantities
+
+## Parameterize a model with categorical predictors
+
+\centerline{\includegraphics[height=2.75in]{Parameterizations.png}}
+
+## Effects Model - Multi-level: Joint and DAG
+
+\centerline{\includegraphics[height=2.05in]{EffectsModelMultiJointDAG.png}}
+
+- Interest in effects and not means
+- Have prior information for effect sizes
+- Lack prior information for effect sizes - can estimate conservatively
+- Number of parameters > number of unknowns is ok! Why?
+- Recover group means as derived quantities
+
+## Effects Model - Multi-Level: Design Matrix
+
+\centerline{\includegraphics[height=1.5in]{EffectsMultiDesignMatrix.png}}
+
+- CRD with 1 factor and 5 levels
+- Intercept, $\mu$, is the grand mean
+- $\alpha_{j}$ represent deviations from the grand mean
+- $\alpha_{j}$ are partially pooled allowing us to estimate all of them directly
+
+## Effects Models - Multi-level: JAGS
+
+\tiny
+``` {r, eval=FALSE}
+# Priors
+mu ~ dnorm(0, 0.001)
+for (i in 1:2){
+  sigma[i] ~ dunif(0, 100)
+  tau[i] <- 1 / ( sigma[i] * sigma[i])
+}
+
+# Likelihood
+for (i in 1:5){			
+  alpha[i] ~ dnorm (0, tau[2])
+}
+for (i in 1:50) {
+  y[i] ~ dnorm(y.hat[i], tau[1]) 
+  y.hat[i] <- mu + alpha[x[i]]
+}
+
+# Derived quantities
+for (i in 1:5){			
+  cell[i] <- mu + mean(alpha[i]) 
+}
+```
+
+\normalsize
+
+- Use index trick!
+- Compute cell means as derived quantities
+
+## Bayesian Approach to Experimental Analysis
+
+\begin{columns}[T] % contents are top vertically aligned
+\begin{column}[T]{6cm} % each column can also be its own environment
+\begin{itemize}
+\item Flexible framework
+\item Ease of interpreting effects
+\end{itemize}
+
+Make statements like:
+\newline
+\par\noindent Pr(Browsed > Unbrowsed) = .8
+\newline
+\par\noindent CI95: effect of browse = -4.0%, 3.7%
+
+\end{column}
+\begin{column}[T]{5cm} % alternative top-align that's better for graphics
+\centerline{\includegraphics[height=2.25in]{p_values.png}}
+\end{column}
+\end{columns}
+\vspace{8mm}
+
+## Bayesian ANOVA
+
+A way to summarize the "relative importance of different sources of variation in a dataset." \tiny(Gelman and Hill, 2007)
+
+\normalsize
+
+- Uses the finite-population SD and not the superpopulation SD
+- Can show variation decomposition across multiple levels
+- Unbalanced data and complex or incomplete designs easily handled
+- Can still be done with "fixed" effects
+
+\centerline{
+\includegraphics[width=.35\textwidth]{qian1.png}
+\includegraphics[width=.35\textwidth]{qian2.png}
+}
+
+\vspace{5mm}
+\tiny{Hector et al. 2011, Qian and Shen 2007, Gelman 2005}
+
+## Bayesian ANOVA: JAGS
+
+- Compute finite-population SDs computation as derived quantities
+
+\tiny
+``` {r, eval=FALSE}
+# Priors
+mu ~ dnorm(0, 0.001)
+for (i in 1:2){
+  sigma[i] ~ dunif(0, 100)
+  tau[i] <- 1 / ( sigma[i] * sigma[i])
+}
+
+# Likelihood
+for (i in 1:5){			
+  alpha[i] ~ dnorm (0, tau[2])
+}
+for (i in 1:50) {
+  y[i] ~ dnorm(y.hat[i], tau[1]) 
+  y.hat[i] <- mu + alpha[x[i]]
+  s.yerr[i] <- y[i] - y.hat[i]
+}
+
+# Derived quantities
+for (i in 1:5){			
+  cell[i] <- mu + mean(alpha[i]) 
+}
+s.alpha <- sd(alpha[]) 
+s.y <- sd(y.err[])
+```
+
+## Mutiple Mean Comparison
+
+- Fundamentally different approach to mean comparisons
+- Shrinkage and/or informed priors
+
+\centerline{\includegraphics[height=2.25in]{GelmanPaper.png}}
+
+\vspace{8mm}
+\tiny{Gelman 2013, Gelman et al. 2012}
+
+## References
+
+\footnotesize
+
+[1] A. Gelman. Analysis of variance – why it is more important than ever. Annals of Statistics, 33(1):1–31, 2005.
+
+[2] A. Gelman and J. Hill. Data analysis using regression and multilevel/hierarchical models. Cambridge University Press, Boston, MA, USA, 2007.
+
+[3] A. Gelman, J. Hill, and M. Yajima. Why we (usually) don’t have to worry about multiple comparisons. Journal of Research on Educational Effectiveness, 5(2):189–211, 2012.
+
+[4] A. Hector, T. Bell, Y. Hautier, F. Isbell, M. K$\'{e}$ry, P. B. Reich, J. van Ruijven, and B. Schmid. BUGS in the analysis of biodiversity experiments: Species richness and composition are of similar importance for grassland productivity. PLoS ONE, 6(3):e17434, 2011.
+
+[5] S. S. Qian and Z. Shen. Ecological applications of multilevel analysis of variance. Ecology, 88(10):2489– 2495, 2007.
+
+[6] A. Gelman and E. Loken. The garden of forking paths: Why multiple comparisons can be a problem, even when there is no “fishing expedition” or “p-hacking” and the research hypothesis was posited ahead of time. Department of Statistics, Columbia University, 2013.
+
+## Exercise
+
+You have 60 plots spread out over a large area. For each plot, you apply one of three possible treatments (treatment A, B, or C).  In addition, you are concerned about the effect of rainfall on these plots so you measure total rainfall on each plot during the course of the experiment.
+
+- What experimental design is this?
+- What would the design matrix look like?
+- Write the DAG and joint for this experiment.
+
+Let's say you thought the effects of rainfall varied by treatment. 
+
+- Modify your DAG and joint distribution to measure these effects.
+
+## Exercise
+
+You have 60 plots organized into groups of three. For each group, you apply all three treatments, one treatment per plot. The plots are in a small area so you ignore rainfall this time.
+
+- What experimental design is this?
+- What would the design matrix look like?
+- Write the DAG and joint for this experiment.
+
+Now assume the number of treatments is 10 instead of 3.
+
+- How would you model the effects hierarchically?
+

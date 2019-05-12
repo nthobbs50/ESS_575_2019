@@ -1,0 +1,568 @@
+---
+title: "Bayesian Analysis of Designed Experiments"
+author: "N. T. Hobbs and C. Che-Castaldo"
+date: "April 16, 2019"
+output: 
+  beamer_presentation:
+    includes:
+      in_header: header.tex
+theme: Boadilla
+subtitle: ESS 575
+latex_engine: xelatex
+transition: fastest
+---
+
+
+## Housekeeping
+* No lecture on next two Thursdays (4/18, 4/26)
+* Lab as usual until end of semester
+* Remember class party 4/27 
+* Poll food habits
+
+## Nitrous oxide lab
+
+Debrief 
+
+## Individual projects
+
+How to "figure it out."
+
+## Analyzing experimental data: Why Bayes?
+
+\centerline{\includegraphics[height=2.75in]{SokalandRolf.png}}
+
+
+## Analyzing experimental data: Why Bayes?
+
+\centerline{\includegraphics[height=1 in]{ExperimentalPlot.jpg}}
+* Probabilistic interpretation of effects
+* Contrasts easy to construct
+* No "error" terms
+* Can accommodate errors in responses (and predictors for ANCOVA)
+* Can accommodate missing data
+* Multiple comparisons of means handled sensibly
+* Derived quantities handled easily
+
+\vspace{3mm}
+\tiny{Photo c/o of the Minnesota Agricultural Experiment Station at HTTP://WWW.meas.mun.ed.}
+
+## Yellowstone experiment
+\centerline{\includegraphics[height=3 in]{Height_comparison_at_elk.jpg}}
+
+## Analysis of the joint distribution of data and parameters
+\centerline{\includegraphics[height=1.65 in]{HeightOvertime.pdf}}
+\vspace{-.4 in}
+\begin{align}
+\mu_{ijt}&=\beta_{0_{j}}+(\beta_{1}+\beta_{2}x_{1,ij}+\beta_{3}x_{2,ij}+\\&\beta_{4}x_{1,ij}x_{2,ij})t\\y_{ijt}&\sim\text{lognormal}(\log(\mu_{ijt}),\sigma_{j}^{2})\nonumber\\\beta_{0j}&\sim\text{normal}(\mu_{\beta_{0}},\sigma_{\beta_{0}}^{2})\nonumber\\\mu_{\beta_{0}}&\sim\text{normal}(0,10000)\nonumber\\\sigma_{\beta_{0}}^{2}&\sim\text{uniform}(0,5)\\\beta_{i\in1,...,3}&\sim\text{normal}(0,10000)
+\end{align}
+
+
+
+## Learning objectives
+* Understand design matrix notation for models with nominal (qualitative) variables.
+* Be able to compose Bayesian models for simple experimental designs.
+* Build a foundation of knowledge needed for developing models appropriate for your specific research.
+* Lean a spectacular trick for composing design matrices.
+
+
+## Topics
+* Review of matrix algebra
+* Design matrices
+* Specifying models including design
+* A general approach to model building
+    - Means models vs effects models
+    - Constraints on parameters
+* Inference
+    - Effect sizes
+    - Contrasts
+    - Multiple comparisons
+    
+
+## Matrix notation for linear models
+
+Remember matrix multiplication?
+
+Example of matrix multiplication for $n$ observations using 2 predictor variables $x_{i,1}$ and $x_{i,2}$ and an intercept. 
+
+$$\begin{aligned}
+\left(\begin{array}{ccc} 1 & x_{1,1} & x_{1,2}\\ 1 & x_{2,1} & x_{2,2}\\ 1 & x_{3,1} & x_{3,2}\\ 1 & . & .\\ 1 & . & .\\ 1 & . & .\\ 1 & x_{n,1} & x_{n,2} \end{array}\right)\left(\begin{array}{c} \beta_{0}\\ \beta_{1}\\ \beta_{2} \end{array}\right)&=&\left(\begin{array}{c} \beta_{0}+\beta_{1}x_{1,1}+\beta_{2}x_{1,2}\\ \beta_{0}+\beta_{1}x_{2,1}+\beta_{2}x_{2,2}\\ \beta_{0}+\beta_{1}x_{3,1}+\beta_{2}x_{3,2}\\ .\\ .\\ .\\ \beta_{0}+\beta_{1}x_{n,1}+\beta_{2}x_{n,2} \end{array}\right)=\left(\begin{array}{c} \mu_{1}\\ \mu_{2}\\ \mu_{3}\\ .\\ .\\ .\\ \mu_{n} \end{array}\right)
+\end{aligned}$$
+Define inner product (aka dot product.)
+
+## Matrix notation for linear models
+
+You will often see models written using something like
+$$y_i \sim \text{normal}(\mathbf{x}_i'\boldsymbol{\beta},\sigma^2)$$
+or
+$$y_i \sim \text{normal}(\mathbf{x}_i^T\boldsymbol{\beta},\sigma^2)$$
+or (incorrectly, in my view)
+$$y_i \sim \text{normal}(\mathbf{X}_i\boldsymbol{\beta},\sigma^2)$$
+or
+$$\mathbf{y} \sim \text{multivariate normal}(\mathbf{X}\boldsymbol{\beta},\sigma^2I)$$
+Note that $\mathbf X$ is a matrix with ones in column 1 and values of covariates in other columns. Thus, $\mathbf X \boldsymbol{\beta}$ returns a vector. 
+
+
+## Matrix notation for linear models
+
+You also see models written using something like
+$$y_i \sim \text{normal}(\beta_0 + \mathbf{x}_i'\boldsymbol{\beta},\sigma^2)$$
+or
+$$y_i \sim \text{normal}(\beta_0 + \mathbf{x}_i^T\boldsymbol{\beta},\sigma^2)$$
+Note that in this case $\mathbf X$ is a matrix of values of covariates in columns. It does not have a ones in column one. I like this form because it is easy to create multi-level models by simply subscripting $\beta_0$ to represent groups.  Often you see the$'$ or the $T$ superscript omitted.
+
+## Design matrix
+
+\centerline{\includegraphics[height=2 in]{QuantitativeDesignMatrix.png}}
+
+\vspace{5mm}
+
+* Fine for quantitative x's, but how do we handle qualitative predictor variables, i.e., different treatments and treatment levels in an experiment, qualitative variables in descriptive (non-experimental) models?
+* These mean the same thing in this context: categorical = non-metric = nominal = qualitative
+
+
+## Note
+
+The next several completely random designs but could be easily modified to incorporate restrictions on the randomization, for example blocking. The $\beta_0$ term can be interpreted as the mean in the control or "reference" condition. If there is no control, then the $\beta0$ term is viewed as the "grand mean." The slope terms represent "effects", the changes in the control attributable to different treatments and treatment levels. These are called "effects models."  We will talk about more complex designs, "means models", and models that lack controls subsequently. We will also show how the slopes need to be contstrained to prevent problems with identifiability. 
+
+
+
+## Notation for models: design matrices
+
+\centerline{\includegraphics[height=2.5in]{DesignMatrix.png}}
+
+## Notation for models: design matrices with repeated measures
+
+\centerline{\includegraphics[height=2.5in]{DesignMatrixRepeatedMeasures.png}}
+
+## Notation for models: design matrices with interactions
+
+\centerline{\includegraphics[height=2.5in]{DesignMatrixInteractions.pdf}}
+
+
+
+Both approaches are esily related to rectangular structures for storing your data.
+
+##Tricks for specifying design matrices
+Look into `model.matrix` in R or, if you can specify a model for `lme` you can get the design and the random effects matrices using
+\footnotesize
+```{r, eval=FALSE}
+#get design and random effects matrices for split plot design
+library(MASS)
+library(lme4)
+fit.lme = lmer(Y ~ B + V * N + (1 | B:V), data= oats)
+X = as.matrix(getME(fit.lme, "X"))
+Z = as.matrix(getME(fit.lme, "Z"))
+#Code for JAGS likelihood:
+#beta is vector of coefficients, X is fixed effects model matrix
+#gamma is vector of ranom effects, Z is random effects model matrix
+ for (i in 1:n) {
+      y[i]~dnorm(mu[i],tau.res)
+      mu[i] <- inprod(beta[],X[i,]) + inprod(gamma[],Z[i,])  
+   }
+```
+## Notation for models: subscripting parameters
+
+\centerline{\includegraphics[height=1.85in]{CoefficientMatrix.png}}
+
+## Notation for models: subscripting parameters with interactions
+
+\centerline{\includegraphics[height=1.85in]{CoefficientMatrixInteractions.png}}
+
+##Pseudo code for implementing subscipted models with controls and interactions
+
+\tiny
+
+```{r, eval=FALSE}
+beta0 ~ dnorm(0,.00001) #mean in the absence of treatment
+sigma ~ dunif(0,100)
+tau <- 1/sigma^2
+#Set first coefficent to 0 when there are contols. This is indexed as 1 in the data.
+beta1[1] <-  0
+beta2[1] <- 0
+for(i in 2 : n.levels.beta1){
+  beta1[j] ~ dnorm(0,.000001)
+  beta3[i,1] <- 0
+ }
+for(j in 1 : n.levels.beta2){
+  beta2[j] ~ dnorm(0,.000001)
+  }
+#priors for interactions
+for(1 in 1 : n.levels.beta1{
+    for(j in 1 : n.levels.beta2){
+    beta3[i,j] ~ dnorm(0,.000001)
+    }
+}
+#likelihood
+for(i in 1:length(y)){
+  #x.index[i] is data vector set to zero if either coefficient 
+  #index = 1, so that observation is from control level of
+  #either treatment
+  mu[i] <- beta0 + beta1[beta1.index[i]] + beta2[beta2.index[i]] +
+     beta3[beta1.index[i], beta.2.index[i]]] * x.index[i] 
+prior
+  y[i] ~ dnorm(mu[i], tau)
+}
+```
+
+\normalsize
+
+##Pseudo code for implementing subscipted models without controls and interactions
+
+\tiny
+
+```{r, eval=FALSE}
+beta0 ~ dnorm(0, .00001) #grand mean
+sigma ~ dunif(0, 100)
+tau <- 1/sigma^2
+sigma.beta1 ~ dunif(0, 100)
+sigma.beta2 ~ dunif(0, 100)
+sigma.beta3 ~ dunif(0, 100)
+#note multilevel structure for coefficients
+for(j in 1:n.levels.beta1){
+  beta1[j] ~ dnorm(0, sigma.beta1^-2)
+}
+for(j in 1:n.levels.beta2){
+  beta2[j] ~ dnorm(0, sigma.beta2^-2)
+}
+#priors for interactions
+for(1 in 1:n.levels.beta1{
+    for(j in 1:n.levels.beta2){
+    beta3[i,j] ~ dnorm(0,sigma.beta3^-2)
+    }
+}
+#likelihood
+for(i in 1:length(y)){
+  mu[i] <- beta0 + beta1[beta1.index[i]] + 
+    beta2[beta2.index[i]] +
+    beta3[beta1.index[i], beta.2.index[i]]] 
+    #Order of index for beta3 must match prior
+  y[i] ~ dnorm(mu[i], tau)
+}
+```
+
+\normalsize
+
+## Which notation to use?
+
+* Design matrix
+    - Clear interpretation analogous to regression
+    - Coefficients drop out for controls because $\beta x_i=0$
+    - Easily adapted for selecting among alternative models without modfiying JAGS code using R's `model.matrix()` function
+    - Particularly well suited to single levels of treatment with control
+* Subscripting parameters
+    - Easier to write for complex models
+    - Most models in texts written this way. Never invent what you can imitate. 
+    - Usually easier to code, but be careful about interactions when there are controls
+    - Must set one slope parameter to zero if you have a control or reference.
+
+
+## Recall ignorability and reserach design
+
+* Designs that are ignorable require no indices other that an index for the individual observations (i.e. $y_i$ ) and the covariates ($x_i$). Simple random sampling and completely randomized experiments have ignorable designs. In these cases $[I\mid x, y, \phi] = [I]$.
+
+* Designs that are not completely random, for example, randomized complete block experiments, stratified random sampling, cluster, and others are not ignorable and must include information on the design in the analysis. Usually, proper indexing and information about the sample sizes specifies all of the needed information. In these cases, $[ I\mid x, y, \phi] = [I|x]$.
+
+## Widely used designs in ecology illustrated with Yellowstone treatments
+
+\centerline{\includegraphics[height=2.5in]{DesignSketch.png}}
+
+##
+\vspace{-.55cm}
+\begin{align}
+&\text{Completely Random\nonumber}\\
+\mu_{i}&=\beta_0+\beta_{1}x1_{1,i}+\beta_{2}x_{2,i} + \beta_{3}x_{1,i}x_{2,1}\nonumber\\
+y_{ikm}&\sim~\text{lognormal}(y_{ikm}\mid\log(\mu_{km}),\sigma^2)\nonumber\\
+\beta_0&\sim\text{normal}(0,10000)\nonumber\\
+\nonumber\\
+&\text{Randomized Complete Block\nonumber}\\
+\mu_{i}&=\beta_{0,j}+\beta_{1}x1_{1,ij}+\beta_{2}x_{2,ij} + \beta_{3}x_{1,ij}x_{2,1}\nonumber\\
+\beta_{0,j}&\sim\text{normal}(\mu_{\beta_0},\sigma^2_{\beta_0})\nonumber\\
+y_{ij}&\sim~\text{lognormal}(y_{ij}\mid\log(\mu_{jkm}),\sigma^2)\nonumber\\
+\nonumber\\
+&\text{Split Plot}\nonumber\\
+\mu_{ijk}&=\beta_{0,j}+\beta_{1}x{1,ijk}+\beta_{2}x_{2,ijk} + \beta_{3}x_{1,ijk}x_{2,ijk} + \epsilon_{jk} \nonumber\\
+\beta_{0,j}&\sim \text{normal}(\mu_{\beta_0},\sigma^2_{\beta_0})\nonumber\\
+\epsilon_{jk}&\sim \text{normal}(0,\sigma^2_{jk})\\
+y_{ijk}&\sim\text{lognormal} (y_{ijk}\mid \log{(\mu_{jk}},\sigma^2)\nonumber
+\end{align}
+
+## Topics
+* A general approach to model building
+    - Means models vs effects models
+    - Constraints on parameters
+* Inference
+    - Effect sizes
+    - Contrasts
+    - Multiple comparisons
+
+####A general approach to building models with categorical predictors
+
+## Choices in specifying models
+
+\centerline{\includegraphics[height=2.75in]{Parameterizations.png}}
+
+## Cell Means Model: Joint and DAG
+
+\centerline{\includegraphics[height=1.2in]{CellMeansJointDAG.png}}
+
+- Interest in group means and not effects
+- Have prior information for group means
+- Lack prior information for group means - use vague priors
+- Number of parameters = number of unknowns 
+- Recover effects or grand mean as derived quantities
+
+## Cell Means Model: Design Matrix
+
+\centerline{\includegraphics[height=1.5in]{CellMeansDesignMatrix.png}}
+
+## Cell Means Model: JAGS
+
+\tiny
+```{r, include = TRUE, echo = TRUE, eval= FALSE}
+#priors
+for (i in 1:5) {
+  alpha[i] ~ dnorm(0, 0.001)
+ }
+sigma ~ dunif(0, 100)
+tau <- 1 / ( sigma * sigma)
+
+# Likelihood
+
+
+mu = X %*% alpha #X is 50 x 5 design matrix
+for (i in 1:50) {
+  y[i] ~ dnorm(mu[i], tau)
+}
+# or, equivalently the likelihood could be
+# for (i in 1:50) {
+#   y[i] ~ dnorm(alpha[x[i]], tau) #x[i] is index, 1 - 5
+# }
+
+# Derived quantities
+diff.2.1 <- alpha[2] - alpha[1]
+diff.3.1 <- alpha[3] - alpha[1]
+grandMean <- mean(alpha)
+effects =  alpha - grandMean
+```
+
+\normalsize
+
+- Use the index trick implements subscripted parameter model.
+- Matrix multiplication implements design matrix model.
+- Compute effects and contrast as derived quantities
+
+
+## Effects Models - Set to Zero: Joint and DAG
+
+\centerline{\includegraphics[height=1.35in]{EffectsModelJointDAG.png}}
+
+- Interest in effects and not means
+- Have prior information for effect sizes
+- Lack prior information for effect sizes - can estimate conservatively
+- Number of parameters > number of unknowns requires constraint
+- Recover group means as derived quantities
+
+## Effects Model- Set to Zero: Design Matrix
+
+\centerline{\includegraphics[height=1.35in]{EffectsSetZeroDesignMatrix.png}}
+
+\vspace{5mm}
+
+- CRD with 1 factor and 5 levels
+- Remove parameter by setting  $\alpha_{5}=0$
+- Group 1 is now represented by intercept $\mu$
+- $\alpha_{5}$ represent deviations from this baseline/control group
+
+## Effects Models - Set to Zero: JAGS
+
+\tiny
+``` {r, eval=FALSE}
+# Priors
+for (i in 1:5){
+  alpha[i] ~ dnorm(0, 0.001)
+}
+
+sigma ~ dunif(0, 100)
+tau <- 1 / ( sigma * sigma)
+
+# Likelihood, design matrix model
+mu = X %*% alpha  #X is design 50 x 5 design matrix with 1's in column one
+for (i in 1:50) {
+  y[i] ~ dnorm(mu[i] , tau) 
+}
+ 
+
+# Derived quantities
+cell[1] <- alpha[1]
+for (i in 2:4){
+  cell[i] <- alpha[1] + alpha[i]
+}
+grandMean <- mean(cell[])
+```
+
+\normalsize
+
+- Compute cell and grand means as derived quantities
+
+## Parameterize a model with categorical predictors
+
+\centerline{\includegraphics[height=2.75in]{Parameterizations.png}}
+
+## Effects Model - Multi-level: Joint and DAG
+
+\centerline{\includegraphics[height=1.75in]{EffectsModelMultiJointDAG.png}}
+
+- Interest in effects and not means
+- Have prior information for effect sizes
+- Lack prior information for effect sizes - can estimate conservatively
+- Number of parameters > number of unknowns is ok! Why?
+- Recover group means as derived quantities
+
+## Effects Model - Multi-Level: Design Matrix
+
+\centerline{\includegraphics[height=1.4in]{EffectsMultiDesignMatrix.png}}
+
+- CRD with 1 factor and 5 levels
+- Intercept, $\mu$, is the grand mean
+- $\alpha_{j}$ represent deviations from the grand mean
+- $\alpha_{j}$ are partially pooled allowing us to estimate all of them directly
+
+## Effects Models - Multi-level: JAGS
+
+
+``` {r, eval=FALSE}
+# Priors
+mu0 ~ dnorm(0, 0.001)
+for (i in 1:2){
+  sigma[i] ~ dunif(0, 100)
+  tau[i] <- 1 / ( sigma[i] * sigma[i])
+}
+
+# Likelihood
+for (i in 1:6){			
+  alpha[i] ~ dnorm (0, tau[2])
+}
+mu ~ dnorm(0,10000)
+#Design matrix approach
+mu[i]  = X %*% alpha
+for (i in 1:50) {
+  y[i] ~ dnorm(mu[i], tau[1]) 
+}
+# indexed coefficients approach
+# for (i in 1:50) {
+#   y[i] ~ dnorm(y.hat[i], tau[1]) 
+#   y.hat[i] <- mu + alpha[x[i]] #x[i] indexes alphas 2-6
+# }
+
+
+# Derived quantities
+for (i in 2:6){			
+  cell[i] <- mu0 + alpha[i] 
+}
+```
+
+
+
+- Use index trick for subscript model.
+- Compute cell means as derived quantities
+
+## Not covered: Sum to zero constraint
+
+See 
+
+* Kruschke, J. K. 2015. Doing Bayesian Data Analysis: A Tutorial with R, JAGS, and Stan. Academic Press, Inc. Pages 583- 590
+
+* Ntzoufras, I. 2009. Bayesian Modeling Using WinBUGS John Wiley & Sons, Hoboken, NJ U.S.A. Pages: 169 - 172
+
+
+
+## Clairity of interpretation
+
+\begin{columns}[T] % contents are top vertically aligned
+\begin{column}[T]{6cm} % each column can also be its own environment
+\begin{itemize}
+\item We make inference using marginal posteriors of parameters and derived quantities.
+\item "The probability that the effect of treatment exceed 0 was .95"
+\item "We can be 90\% certain that the dam treatment doubled willow height by year 17."
+\item Pr(Browsed > Unbrowsed) = .83
+\item CI95: effect of browse = -4.0%, 3.7%
+\end{itemize}
+
+\end{column}
+\begin{column}[T]{5cm} % alternative top-align that's better for graphics
+\centerline{\includegraphics[height=2.25in]{p_values.png}}
+\end{column}
+\end{columns}
+\vspace{8mm}
+
+## Multiple comparisons of cell means
+
+Inference on differences between cell means are calculated directly in a means model or indirectly in an effects model. They are made as the difference posterior distribution of the difference between cell means. These are analogous to single degree of freedom contrasts or Tukeys or the like, but a lot less trouble. But what about the problem of multiple comparisons? 
+
+
+## Mutiple Comparisons of means
+
+- Fundamentally different approach to mean comparisons
+- Shrinkage and/or informed priors
+
+\centerline{\includegraphics[height=2.25in]{GelmanPaper.png}}
+Note that is is more "difficult" to find differences among means in the multi-level case because the are pulled together by partial pooling.
+\vspace{8mm}
+\tiny{Gelman 2013, Gelman et al. 2012}
+
+
+## Multiple comparisons of cell means
+
+Multiple comparisons are reliable if the model is hierarchical such that means or effects are drawn from a distribution. Illustrating:
+
+$$[\boldsymbol{\mu},\sigma^{2},\boldsymbol{\alpha},\varsigma_{\mu}^{2}\mid\mathbf{y}]\propto\prod_{i=1}^{n_{j}}\prod_{j=1}^{J}[y_{ij}|\mu_{j},\sigma^{2}][\mu_{j}|\boldsymbol{\alpha},\varsigma_{\mu}^{2}][\sigma^{2}][\varsigma^{2}][\alpha]$$
+Subtract one cell mean from another to get posterior distribution of difference of means. Shrinkage of the distribution of means as the number of means increases assures that it becomes more difficult for the posterior distribution of a difference between to exclude 0. Neat and tidy.
+
+This also holds for effects models where cell means are calculated from effects and the control or grand mean.
+
+
+## Future study
+1. Hobbs and Hooten, chapters 6.2.3 and 10.2.
+
+2. A. Gelman, J. B. Carlin, H. S. Stern, D. Dunson, A. Vehhtari, and D. B. Rubin. Bayesian data analysis. 2013 Chapman and Hall / CRC, London, UK.
+
+3. A. Gelman, and J. Hill. 2009. Data analysis using regression and multilevel / hierarchical models. Cambridge University Press, Cambridge, UK. 
+
+4. McCarthy, M. A. 2007. Bayesian Methods for Ecology. Cambridge University Press, Cambridge, U. K. 
+
+## Take home from this exhausting lecture
+
+* Analysis of designed experiments closely resembles other types of Bayesian modeling, providing enormous flexibility to the experimentalist.
+
+* We can use moment matching and all of the hierarchical tricks we have learned to flexibly create models for analysis of designed experiments:
+    – Responses and latent quantities with support 0 or 1, 0 to 1, counts, successes on trials, counts in multiple categories, real strictly non-negative, all real numbers.
+    – Errors in quantitative covariates (if we have them).
+    – Errors in responses
+    – Group level effects (aka random effects) in space and time.
+* Results are easy to interpret and communicate.
+
+## Future study
+1. Hobbs and Hooten, chapters 6.2.3 and 10.2.
+
+2. A. Gelman, J. B. Carlin, H. S. Stern, D. Dunson, A. Vehhtari, and D. B. Rubin. Bayesian data analysis. 2013 Chapman and Hall / CRC, London, UK.
+
+3. A. Gelman, and J. Hill. 2009. Data analysis using regression and multilevel / hierarchical models. Cambridge University Press, Cambridge, UK. 
+
+4. McCarthy, M. A. 2007. Bayesian Methods for Ecology. Cambridge University Press, Cambridge, U. K. 
+
+## References
+
+\footnotesize
+
+[1] A. Gelman. Analysis of variance – why it is more important than ever. Annals of Statistics, 33(1):1–31, 2005.
+
+[2] A. Gelman and J. Hill. Data analysis using regression and multilevel/hierarchical models. Cambridge University Press, Boston, MA, USA, 2007.
+
+[3] A. Gelman, J. Hill, and M. Yajima. Why we (usually) don’t have to worry about multiple comparisons. Journal of Research on Educational Effectiveness, 5(2):189–211, 2012.
+
+[4] A. Hector, T. Bell, Y. Hautier, F. Isbell, M. K$\'{e}$ry, P. B. Reich, J. van Ruijven, and B. Schmid. BUGS in the analysis of biodiversity experiments: Species richness and composition are of similar importance for grassland productivity. PLoS ONE, 6(3):e17434, 2011.
+
+[5] S. S. Qian and Z. Shen. Ecological applications of multilevel analysis of variance. Ecology, 88(10):2489– 2495, 2007.
+
+[6] A. Gelman and E. Loken. The garden of forking paths: Why multiple comparisons can be a problem, even when there is no “fishing expedition” or “p-hacking” and the research hypothesis was posited ahead of time. Department of Statistics, Columbia University, 2013.
+

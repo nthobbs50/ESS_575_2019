@@ -1,0 +1,301 @@
+<style>
+.small-code pre code {
+  font-size: 1em;
+}
+</style>
+
+Design Matrices & Experimental Data
+========================================================
+author: Christian Che-Castaldo 
+date: August 25, 2015
+transition: none
+width: 1440
+height: 900
+
+<right>
+![](TitlePictureMSH.jpg)
+</right>
+
+Analyzing experimental data: Why Bayes?
+========================================================
+<right>
+![](SokalandRolf.png)
+</right>
+
+Design matrix: What is this?
+========================================================
+
+<img src="IntroDesignMatrix.tiff" style="background-color:transparent; border:0px; box-shadow:none;", width="600"></img>
+
+<img src="QuantitativeDesignMatrix.tiff" style="background-color:transparent; border:0px; box-shadow:none;", width="800"></img>
+
+Simulate data: One-Way ANOVA
+========================================================
+- Simulate data for a factor with 5 levels
+- 10 replicates per level, 50 replicates overall
+
+
+<img src="BoxPlot.png" style="background-color:transparent; border:0px; box-shadow:none;", height="625"></img>
+
+
+How can we parameterize a model with all binary data?
+========================================================
+<img src="Parameterizations.tiff" style="background-color:transparent; border:0px; box-shadow:none;"></img>
+
+Cell Means Model
+========================================================
+- Interest in group means and not effects
+- Have prior information for group means
+- Lack prior information for group means and wish to use vague priors
+- Number of parameters = Number of unknowns 
+- Recover effects or grand mean as derived quantities
+
+<img src="CellMeansJointDAG.tiff" style="background-color:transparent; border:0px; box-shadow:none;", width="1400"></img>
+
+Cell Means Model: Design Matrix
+========================================================
+- CRD with 1 factor and 5 levels
+
+<img src="CellMeansDesignMatrix.tiff" style="background-color:transparent; border:0px; box-shadow:none;", width="1000"></img>
+
+Cell Means Model: JAGS
+========================================================
+class: small-code
+- Use the index trick!
+- Compute effects and grand mean as derived quantities
+
+
+```r
+(x <- rep(1:5, rep(10, 5)))
+```
+
+```
+ [1] 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 4 4 4 4 4
+[36] 4 4 4 4 4 5 5 5 5 5 5 5 5 5 5
+```
+
+
+```r
+#priors
+for (i in 1:5)
+{mu[i] ~ dnorm(0, 0.001)}
+sigma ~ dunif(0,100)
+tau <- 1 / ( sigma * sigma)
+
+# Likelihood
+for (n in 1:50) {
+  y[n] ~ dnorm(yhat[n], tau) 
+  yhat[n] <- mu[x[n]]
+}
+
+# Derived quantities
+effect.2.1 <- mu[2] - mu[1]
+effect.3.1 <- mu[3] - mu[1]
+grand.mu <- mean(mu[])
+```
+
+How can we parameterize a model with all binary data?
+========================================================
+<img src="Parameterizations.tiff" style="background-color:transparent; border:0px; box-shadow:none;"></img>
+
+Effects Models: Not multi-level
+========================================================
+- Interest in effects and not means
+- Have prior information for effect sizes
+- Lack prior information for effect sizes but desire to estimate these conservatively
+- Number of parameters > Number of unknowns requires constraint
+- Recover group means as derived quantities
+
+<img src="EffectsModelJointDAG.tiff" style="background-color:transparent; border:0px; box-shadow:none;", width="1400"></img>
+
+Effects Model: Design Matrices - Set to Zero
+========================================================
+- CRD with 1 factor and 5 levels
+- Remove parameter by setting  $\alpha_{5}=0$
+- Group 5 is now represented by intercept $\mu$
+- $\alpha_{i}$ represent deviations from this baseline/control group
+
+<img src="EffectsSetZeroDesignMatrix.tiff" style="background-color:transparent; border:0px; box-shadow:none;", width="1200"></img>
+
+Effects Model: Design Matrices - Sum to Zero
+========================================================
+- CRD with 1 factor and 5 levels
+- Remove parameter by setting  $\alpha_{5}=-\sum_{i=1}^{4}\alpha_{i}$
+- Intercept, $\mu$, is the grand mean
+- $\alpha_{i}$ represent deviations from the grand mean
+
+<img src="EffectsSumZeroDesignMatrix.tiff" style="background-color:transparent; border:0px; box-shadow:none;", width="1400"></img>
+
+Effects Models: JAGS - Set to Zero
+========================================================
+class: small-code
+left: 40%
+- Compute cell and grand means as derived quantities
+
+<center>
+<img src="DesignMarixSetJAGS.tiff" style="background-color:transparent; border:0px; box-shadow:none;", width="1000"></img>
+</center>
+
+***
+
+
+```r
+#priors
+for (i in 1:4)
+{alpha[i] ~ dnorm(0, 0.001)}
+mu ~ dnorm(0, 0.001)
+sigma ~ dunif(0,100)
+tau <- 1 / ( sigma * sigma)
+
+# Likelihood
+for (i in 1:50) {
+  y[i] ~ dnorm(yhat[n], tau) 
+  yhat[n] <- mu*int + alpha[1]*d1[n] + alpha[2]*d2[n] 
+  + alpha[3]*d3[n] + alpha[4]*d4[n]
+}
+
+# Derived quantities
+d.mu[5] <- mu
+d.mu[1] <- mu + alpha[1]
+d.mu[2] <- mu + alpha[2]
+d.mu[3] <- mu + alpha[3]
+d.mu[4] <- mu + alpha[4]
+grand.mu <- mean(d.mu[])
+```
+
+Effects Models: JAGS - Sum to Zero
+========================================================
+class: small-code
+left: 40%
+- Compute cell and grand means as derived quantities
+
+<center>
+<img src="DesignMarixSumJAGS.tiff" style="background-color:transparent; border:0px; box-shadow:none;", width="1000"></img>
+</center>
+
+***
+
+
+```r
+#priors
+for (i in 1:4)
+{alpha[i] ~ dnorm(0, 0.001)}
+mu ~ dnorm(0, 0.001)
+sigma ~ dunif(0,100)
+tau <- 1 / ( sigma * sigma)
+
+# Likelihood
+for (i in 1:50) {
+  y[i] ~ dnorm(yhat[n], tau) 
+  yhat[n] <- mu*int + alpha[1]*d1[n] + alpha[2]*d2[n] 
+  + alpha[3]*d3[n] + alpha[4]*d4[n]
+}
+
+# Derived quantities
+alpha.5 <- -sum(alpha[1])
+d.mu[1] <- mu + alpha[1]
+d.mu[2] <- mu + alpha[2]
+d.mu[3] <- mu + alpha[3]
+d.mu[4] <- mu + alpha[4]
+d.mu[5] <- mu + alpha.5
+```
+
+How can we parameterize a model with all binary data?
+========================================================
+<img src="Parameterizations.tiff" style="background-color:transparent; border:0px; box-shadow:none;"></img>
+
+Effects Model: Multi-level
+========================================================
+- Interest in effects and not means
+- Have prior information for effect sizes
+- Lack prior information for effect sizes but desire to estimate these conservatively
+- Number of parameters > Number of unknowns is ok when modeling effects hierarchically
+- Recover group means as derived quantities
+
+<img src="EffectsModelMultiJointDAG.tiff" style="background-color:transparent; border:0px; box-shadow:none;", width="1400"></img>
+
+Effects Model: Design Matrices - Multi-Level
+========================================================
+- CRD with 1 factor and 5 levels
+- Intercept, $\mu$, is the grand mean
+- $\alpha_{i}$ represent deviations from the grand mean
+- $\alpha_{i}$ are partially pooled allowing us to estimate all of them directly
+
+<img src="EffectsMultiDesignMatrix.tiff" style="background-color:transparent; border:0px; box-shadow:none;", width="1400"></img>
+
+Effects Models: JAGS - Multi-level
+========================================================
+class: small-code
+left: 40%
+- Use index trick!
+- Compute cell means as derived quantities after rescaling
+- Compute finite standard deviations as derived quantities
+
+***
+
+
+```r
+#priors
+mu ~ dnorm(0, 0.001)
+sigma[1] ~ dunif(0,100)
+sigma[2] ~ dunif(0,100)
+tau[1] <- 1 / ( sigma[1] * sigma[1])
+tau[2] <- 1 / ( sigma[2] * sigma[2])
+
+# Likelihood
+for (i in 1:14){			
+  alpha[i] ~ dnorm (0, tau[2])
+}
+for (n in 1:50) {
+  y[n] ~ dnorm(y.hat[n], tau[1]) 
+  y.hat[n] <- mu + alpha[x[n]]
+  y.err[n] <- y[n] - y.hat[n]
+}
+
+# Derived quantities
+mu.0 <- mu + mean(alpha[]) 
+for (i in 1:5){
+  alpha.0[i] <- alpha[i] - mean(alpha[])
+  d.mu[i] <- mu.0 + alpha.0[i]
+}
+s.within <- sd(y.err[]) # finite std, analog of sigma[1]
+s.between <- sd(alpha.0[]) # finite std, analog of sigma[2]
+}
+```
+
+Bayesian Approach to Experimental Analysis
+========================================================
+left: 50%
+
+<img src="BayesianAnova.png" style="background-color:transparent; border:0px; box-shadow:none;", height="625"></img>
+
+***
+
+<img src="BayesianAnovaTreatments.png" style="background-color:transparent; border:0px; box-shadow:none;", height="625"></img>
+
+Bayesian Approach to Experimental Analysis
+========================================================
+left: 50%
+- Flexible framework
+- Ease of interpreting effects
+
+Pr(Browsed > Unbrowsed) = .8
+
+CI95: effect of browse = -4.0%, 3.7%
+
+***
+
+<img src="p_values.png" style="background-color:transparent; border:0px; box-shadow:none;", width="400"></img>
+
+Bayesian Approach to Experimental Analysis
+========================================================
+- Unbalanced data and complex or incomplete designs easily handled
+  + Hector et al. 2011, Qian & Shen 2007, Gelman 2005 
+- Fundamentally different approach to mean comparisons
+  + Gelman 2013, Gelman et al. 2012
+  
+<img src="GelmanPaper.png" style="background-color:transparent; border:0px; box-shadow:none;", width="1400"></img>
+
+
+
+
